@@ -72,14 +72,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>..</OutDir>
-    <IncludePath>D:\git\libs\SDL2_image-2.8.2\include;D:\git\libs\SDL2_mixer-2.8.0\include;D:\git\libs\SDL2_ttf-2.22.0\include;D:\git\libs\SDL2-2.30.6\include;D:\git\libs\VulkanSDK\Include;D:\git\gf3d\gfc\simple_logger\include;D:\git\gf3d\gfc\simple_json\include;D:\git\gf3d\gfc\include;D:\git\gf3d\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\git\libs\SDL2_image-2.8.2\lib\x64;D:\git\libs\SDL2_mixer-2.8.0\lib\x64;D:\git\libs\SDL2_ttf-2.22.0\lib\x64;D:\git\libs\SDL2-2.30.6\lib\x64;D:\git\libs\VulkanSDK\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\JoshD\source\libs\SDL2_image-2.8.2\include;C:\Users\JoshD\source\libs\SDL2_mixer-2.8.0\include;C:\Users\JoshD\source\libs\SDL2_ttf-2.22.0\include;C:\Users\JoshD\source\libs\SDL2-2.30.7\include;C:\Users\JoshD\source\libs\VulkanSDK\1.3.290.0\Include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\simple_logger\include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\simple_json\include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\include;C:\Users\JoshD\source\repos\IT466-3DProj\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\JoshD\source\libs\SDL2_image-2.8.2\lib\x64;C:\Users\JoshD\source\libs\SDL2_mixer-2.8.0\lib\x64;C:\Users\JoshD\source\libs\SDL2_ttf-2.22.0\lib\x64;C:\Users\JoshD\source\libs\SDL2-2.30.7\lib\x64;C:\Users\JoshD\source\libs\VulkanSDK\1.3.290.0\Lib;$(LibraryPath)</LibraryPath>
     <TargetName>gf3d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..</OutDir>
-    <IncludePath>D:\git\libs\SDL2_image-2.8.2\include;D:\git\libs\SDL2_mixer-2.8.0\include;D:\git\libs\SDL2_ttf-2.22.0\include;D:\git\libs\SDL2-2.30.6\include;D:\git\libs\VulkanSDK\Include;D:\git\gf3d\gfc\simple_logger\include;D:\git\gf3d\gfc\simple_json\include;D:\git\gf3d\gfc\include;D:\git\gf3d\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\git\libs\SDL2_image-2.8.2\lib\x64;D:\git\libs\SDL2_mixer-2.8.0\lib\x64;D:\git\libs\SDL2_ttf-2.22.0\lib\x64;D:\git\libs\SDL2-2.30.6\lib\x64;D:\git\libs\VulkanSDK\Lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\JoshD\source\libs\SDL2_image-2.8.2\include;C:\Users\JoshD\source\libs\SDL2_mixer-2.8.0\include;C:\Users\JoshD\source\libs\SDL2_ttf-2.22.0\include;C:\Users\JoshD\source\libs\SDL2-2.30.7\include;C:\Users\JoshD\source\libs\VulkanSDK\1.3.290.0\Include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\simple_logger\include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\simple_json\include;C:\Users\JoshD\source\repos\IT466-3DProj\gfc\include;C:\Users\JoshD\source\repos\IT466-3DProj\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\JoshD\source\libs\SDL2_image-2.8.2\lib\x64;C:\Users\JoshD\source\libs\SDL2_mixer-2.8.0\lib\x64;C:\Users\JoshD\source\libs\SDL2_ttf-2.22.0\lib\x64;C:\Users\JoshD\source\libs\SDL2-2.30.7\lib\x64;C:\Users\JoshD\source\libs\VulkanSDK\1.3.290.0\Lib;$(LibraryPath)</LibraryPath>
     <TargetName>gf3d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,6 +121,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Users\JoshD\source\repos\IT466-3DProj\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,6 +139,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>C:\Users\JoshD\source\repos\IT466-3DProj\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -195,6 +197,7 @@
     <ClCompile Include="..\src\gf3d_validation.c" />
     <ClCompile Include="..\src\gf3d_vgraphics.c" />
     <ClCompile Include="..\src\gf3d_vqueues.c" />
+    <ClCompile Include="entity.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\gfc\include\gfc_actions.h" />
@@ -252,6 +255,7 @@
     <ClInclude Include="..\include\gf3d_validation.h" />
     <ClInclude Include="..\include\gf3d_vgraphics.h" />
     <ClInclude Include="..\include\gf3d_vqueues.h" />
+    <ClInclude Include="entity.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
