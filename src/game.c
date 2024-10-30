@@ -25,6 +25,7 @@
 #include "gf3d_texture.h"
 #include "gf3d_draw.h"
 
+
 extern int __DEBUG;
 
 static int _done = 0;
@@ -55,6 +56,7 @@ void draw_origin()
 
 int main(int argc,char *argv[])
 {
+    Entity* ent;
     //local variables
     Model *sky,*dino;
     GFC_Matrix4 skyMat,dinoMat;
@@ -73,6 +75,9 @@ int main(int argc,char *argv[])
     gf2d_actor_init(1000);
     gf3d_draw_init();//3D
     gf2d_draw_manager_init(1000);//2D
+
+    //new entity stuff
+    entity_system_init(1000);
     
     //game init
     srand(SDL_GetTicks());
