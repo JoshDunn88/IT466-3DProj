@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\gfc\\simple_json",
+    "\\gfc\\simple_json\\include",
+    "\\images"
   ],
+  "SelectedNode": "\\gfc",
   "PreviewInSolutionExplorer": false
 }
