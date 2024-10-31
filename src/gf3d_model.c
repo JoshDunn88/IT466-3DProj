@@ -122,7 +122,7 @@ void gf3d_model_move(Model *in, GFC_Vector3D offset,GFC_Vector3D rotation)
 {
     int i,c;
     Mesh *mesh;
-    if (!in);
+    if (!in)return;
     c = gfc_list_get_count(in->mesh_list);
     for (i = 0; i < c; i++)
     {
