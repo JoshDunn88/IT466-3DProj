@@ -96,11 +96,12 @@ int main(int argc,char *argv[])
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(0,0,5));
-    gf3d_camera_look_at(gfc_vector3d(0,-10,0),NULL);
+    //gf3d_camera_look_at(gfc_vector3d(0,-10,0),NULL);
     gf3d_camera_set_move_step(0.2);
     gf3d_camera_set_rotate_step(0.05);
     
     gf3d_camera_enable_free_look(1);
+    gf3d_camera_set_auto_pan(0);
     //windows
 
     // main game loop    

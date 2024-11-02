@@ -60,15 +60,17 @@ void player_update(Entity* self)
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
 
       
-            if (keys[SDL_SCANCODE_B])
+            if (keys[SDL_SCANCODE_A])
             {
                // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
-                self->rotation.z+= GFC_HALF_PI/100;
+                self->rotation.z+= 0.01;
+                gfc_angle_clamp_radians(&self->rotation.z);
                 slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
          
-            if (keys[SDL_SCANCODE_N])
+            if (keys[SDL_SCANCODE_W])
             {
                 player_walk_forward(self, moveSpeed);
             }
@@ -77,17 +79,19 @@ void player_update(Entity* self)
                 self->velocity = gfc_vector3d(0,0,0);
             }
             
-            if (keys[SDL_SCANCODE_M])
+            if (keys[SDL_SCANCODE_S])
             {
                 player_walk_forward(self, -moveSpeed);
             }
             
-            if (keys[SDL_SCANCODE_V])
+            if (keys[SDL_SCANCODE_D])
             {
-                self->rotation = gf3d_camera_get_angles();
-                self->rotation.z = -self->rotation.z;
-                self->rotation.z += GFC_PI;
-                
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.z -= 0.01;
+                gfc_angle_clamp_radians(&self->rotation.z);
+                slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
             /*
             if (keys[SDL_SCANCODE_A])
@@ -132,15 +136,17 @@ void cam_follow_player(Entity* self, float offset)
     w = gfc_vector2d_from_angle(self->rotation.z);
     forward.x = w.x;
     forward.y = w.y;
-    //gfc_vector3d_normalize(&forward);
-    gfc_vector3d_set_magnitude(&forward, offset);
-    slog("position: %f,%f,%f", forward.x, forward.y, forward.z);
+    gfc_vector3d_normalize(&forward);
+    slog("befforward: %f,%f,%f", forward.x, forward.y, forward.z);
+    gfc_vector3d_scale(forward,forward, offset);
+    slog("aftforward: %f,%f,%f", forward.x, forward.y, forward.z);
+   //slog("forward: %f,%f,%f", forward.x, forward.y, forward.z);
 
     gfc_vector3d_sub(offsetPos, self->position, forward);
     
 
-    offsetPos.z = 5;
-    slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
+    //offsetPos.z = 5;
+    //slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
     gf3d_camera_look_at(self->position, &offsetPos);
     
 }
