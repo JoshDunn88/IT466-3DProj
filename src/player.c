@@ -44,6 +44,9 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
 	if (!self) return;
+	self->position = gfc_vector3d_added(self->position, gfc_vector3d(0, 0, 0.2));
+	if (self->position.z > 60)
+		self->position = gfc_vector3d(0, 0, 0);
 }
 void player_free(Entity* self)
 {
