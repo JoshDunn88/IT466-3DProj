@@ -137,9 +137,9 @@ void cam_follow_player(Entity* self, float offset)
     forward.x = w.x;
     forward.y = w.y;
     gfc_vector3d_normalize(&forward);
-    slog("befforward: %f,%f,%f", forward.x, forward.y, forward.z);
+    //slog("befforward: %f,%f,%f", forward.x, forward.y, forward.z);
     gfc_vector3d_scale(forward,forward, offset);
-    slog("aftforward: %f,%f,%f", forward.x, forward.y, forward.z);
+    //slog("aftforward: %f,%f,%f", forward.x, forward.y, forward.z);
    //slog("forward: %f,%f,%f", forward.x, forward.y, forward.z);
 
     gfc_vector3d_sub(offsetPos, self->position, forward);

@@ -8,13 +8,17 @@
 
 typedef struct Entity_S
 {
-	Uint8			_inuse;	//flag for memory management
-	GFC_TextLine	name;
+	//entity's model if it has one
+	Model* model;
 	GFC_Vector3D	position;
 	GFC_Vector3D	velocity; //how much entity moves per update
 	GFC_Vector3D	rotation;
-	GFC_Vector3D	scale; 
-	Model			*model; //entity's model if it has one
+	GFC_Vector3D	scale;
+	GFC_TextLine	name;
+	Uint8			_inuse;	//flag for memory management
+	
+	
+	 
 
 	//behavior
 	void (*think) (struct Entity_S* self); //called every frame for entity to decide things
