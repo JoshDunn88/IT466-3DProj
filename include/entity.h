@@ -11,6 +11,7 @@ typedef struct Entity_S
 	Uint8			_inuse;	//flag for memory management
 	GFC_TextLine	name;
 	GFC_Vector3D	position;
+	GFC_Vector3D	velocity; //how much entity moves per update
 	GFC_Vector3D	rotation;
 	GFC_Vector3D	scale; 
 	Model			*model; //entity's model if it has one

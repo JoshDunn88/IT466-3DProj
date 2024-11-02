@@ -72,6 +72,10 @@ void player_update(Entity* self)
             {
                 player_walk_forward(self, moveSpeed);
             }
+            else
+            {
+                self->velocity = gfc_vector3d(0,0,0);
+            }
             
             if (keys[SDL_SCANCODE_M])
             {
@@ -112,10 +116,10 @@ void player_walk_forward(Entity* self, float magnitude)
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
     w = gfc_vector2d_from_angle(-self->rotation.z);
-    forward.x = w.x;
-    forward.y = w.y;
+    forward.x = -w.x;
+    forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
-    player_move(self, forward);
+    self->velocity = forward;
 
 }
 

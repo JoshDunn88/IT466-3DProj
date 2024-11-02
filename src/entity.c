@@ -87,6 +87,7 @@ Entity* entity_new()
 		memset(&_entity_manager.entityList[i], 0, sizeof(Entity));
 		_entity_manager.entityList[i]._inuse = 1;
 		_entity_manager.entityList[i].scale = gfc_vector3d(1, 1, 1);
+		_entity_manager.entityList[i].velocity = gfc_vector3d(0, 0, 0);
 		return &_entity_manager.entityList[i];
 	}
 	slog("no more open entity slots");
@@ -115,6 +116,7 @@ void entity_update(Entity* self)
 {
 	if (!self) return;
 	//basic think stuff here before self update
+	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//meupdate
 	if (self->update) self->update(self);
 }
