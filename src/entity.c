@@ -45,8 +45,7 @@ void entity_clear_all(Entity* ignore)
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		//do specific free
 		entity_free(&_entity_manager.entityList[i]);
-		//need to free the entity pointer itself somewhere too
-		//if (_entity_manager.entityList[i].free) _entity_manager.entityList[i].free(&_entity_manager.entityList[i]); //changed to pass self? is .data in vid
+		
 	}
 }
 
@@ -102,7 +101,6 @@ void entity_free(Entity* self)
 
 	//free anthing special that may have been allocated FOR this
 	if (self->free) self->free(self->data);
-	//free self itself??
 }
 
 void entity_think (Entity* self)

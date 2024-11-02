@@ -26,6 +26,7 @@
 #include "gf3d_draw.h"
 
 #include "entity.h"
+#include "player.h"
 
 
 extern int __DEBUG;
@@ -58,7 +59,7 @@ void draw_origin()
 
 int main(int argc,char *argv[])
 {
-    Entity* ent;
+    Entity* player;
     //local variables
     Model *sky,*dino;
     GFC_Matrix4 skyMat,dinoMat;
@@ -89,9 +90,10 @@ int main(int argc,char *argv[])
     gf2d_mouse_load("actors/mouse.actor");
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
-    dino = gf3d_model_load("models/dino.model");
-    gfc_matrix4_identity(dinoMat);
-    //ent = entity_new();
+
+    //dino = gf3d_model_load("models/dino.model");
+    //gfc_matrix4_identity(dinoMat);
+    player = player_new();
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(15,-15,10));
@@ -121,14 +123,17 @@ int main(int argc,char *argv[])
             //3D draws
         
                 gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
+
                 //always do ui draws after world draws, which are after backgroun draws (skybox)
                 entity_draw_all();
 
-                gf3d_model_draw(
+            /*    gf3d_model_draw(
                     dino,
                     dinoMat,
                     GFC_COLOR_WHITE,
                     0);
+                */
+
                 draw_origin();
             //2D draws
                 gf2d_mouse_draw();
@@ -139,6 +144,7 @@ int main(int argc,char *argv[])
     }    
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
+    entity_free(player); //likely unneccesary, but is extra clean, like washing below the knee
     slog("gf3d program end");
     exit(0); //calls all atexit() functions automatically
     slog_sync();
