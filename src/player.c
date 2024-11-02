@@ -9,7 +9,7 @@ void player_think(Entity* self);
 void player_update(Entity* self);
 void player_free(Entity* self);
 void player_walk_forward(Entity* self, float magnitude);
-
+GFC_Vector3D offsetPos = { 0 };
 Entity* player_new() 
 {
 	Entity* self;
@@ -25,7 +25,7 @@ Entity* player_new()
 	
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
-	//GFC_Vector3D	scale;
+	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
 	self->model = gf3d_model_load("models/dino.model"); //entity's model if it has one
 
 	//behavior
@@ -115,7 +115,7 @@ void player_walk_forward(Entity* self, float magnitude)
 {
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
-    w = gfc_vector2d_from_angle(-self->rotation.z);
+    w = gfc_vector2d_from_angle(self->rotation.z);
     forward.x = -w.x;
     forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
@@ -127,9 +127,20 @@ void cam_follow_player(Entity* self, float offset)
 {
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
-    w = gfc_vector2d_from_angle(-self->rotation.z);
+    
+
+    w = gfc_vector2d_from_angle(self->rotation.z);
     forward.x = w.x;
     forward.y = w.y;
-    //gfc_vector3d_normalize
-   // gf3d_camera_look_at(gfc_vector3d(0, -10, 0), NULL);
+    //gfc_vector3d_normalize(&forward);
+    gfc_vector3d_set_magnitude(&forward, offset);
+    slog("position: %f,%f,%f", forward.x, forward.y, forward.z);
+
+    gfc_vector3d_sub(offsetPos, self->position, forward);
+    
+
+    offsetPos.z = 5;
+    slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
+    gf3d_camera_look_at(self->position, &offsetPos);
+    
 }

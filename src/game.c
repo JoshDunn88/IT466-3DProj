@@ -91,12 +91,11 @@ int main(int argc,char *argv[])
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
 
-    //dino = gf3d_model_load("models/dino.model");
-    //gfc_matrix4_identity(dinoMat);
+    
     player = player_new();
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
-    gf3d_camera_set_position(gfc_vector3d(0,0,0));
+    gf3d_camera_set_position(gfc_vector3d(0,0,5));
     gf3d_camera_look_at(gfc_vector3d(0,-10,0),NULL);
     gf3d_camera_set_move_step(0.2);
     gf3d_camera_set_rotate_step(0.05);
@@ -110,14 +109,20 @@ int main(int argc,char *argv[])
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
-        //camera updates
-        gf3d_camera_controls_update();
-        gf3d_camera_update_view();
-        gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+        
 
         //ent stuff here after input before draws? 
         entity_think_all();
         entity_update_all();
+
+        //camera work should prob go last - Josh
+        //camera updates
+        gf3d_camera_controls_update();
+        cam_follow_player(player, 20);
+        gf3d_camera_update_view();
+        gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+
+
         gf3d_vgraphics_render_start();
 
             //3D draws
