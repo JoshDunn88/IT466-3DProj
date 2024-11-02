@@ -78,8 +78,8 @@ int main(int argc,char *argv[])
     gf3d_draw_init();//3D
     gf2d_draw_manager_init(1000);//2D
 
-    //new entity stuff
-    entity_system_init(1000);
+    //new entity stuff, always do after prereq inits
+    entity_system_init(1024);
     
     //game init
     srand(SDL_GetTicks());
@@ -91,6 +91,7 @@ int main(int argc,char *argv[])
     gfc_matrix4_identity(skyMat);
     dino = gf3d_model_load("models/dino.model");
     gfc_matrix4_identity(dinoMat);
+    //ent = entity_new();
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(15,-15,10));
@@ -112,11 +113,17 @@ int main(int argc,char *argv[])
         gf3d_camera_update_view();
         gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
 
+        //ent stuff here after input before draws? 
+        entity_think_all();
+        entity_update_all();
         gf3d_vgraphics_render_start();
 
             //3D draws
         
                 gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
+                //always do ui draws after world draws, which are after backgroun draws (skybox)
+                entity_draw_all();
+
                 gf3d_model_draw(
                     dino,
                     dinoMat,
@@ -133,7 +140,7 @@ int main(int argc,char *argv[])
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
     slog("gf3d program end");
-    exit(0);
+    exit(0); //calls all atexit() functions automatically
     slog_sync();
     return 0;
 }
