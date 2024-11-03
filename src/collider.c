@@ -67,7 +67,7 @@ void collider_free(Collider* self) {
 Uint8 check_collision(Collider* self, Collider* other) {
 	if (!self || !other) return 0;
 	if (self == other) {
-		slog("no thats me");
+		//slog("no thats me");
 		return 0;
 	}//do not collide with self
 	if (self->primitive.type == GPT_BOX) { // && Layer!= LAYER
@@ -110,7 +110,10 @@ void collider_update(Collider* self) {
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
-	gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
+	self->primitive.s.b.x = self->position.x;
+	self->primitive.s.b.y = self->position.y;
+	self->primitive.s.b.z = self->position.z;
+	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }
 
 void set_as_trigger(Collider* self, Uint8 toBeTrigger) {

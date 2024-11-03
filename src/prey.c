@@ -18,11 +18,11 @@ Entity* prey_new()
 
 	//self->name = "playerr";
 
-	self->position = gfc_vector3d(0, 5, 0);
+	//self->position = gfc_vector3d(0, 5, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.2, 0.2, 0.2);
 	self->model = gf3d_model_load("models/dino.model"); //entity's model if it has one
-	self->collider = box_collider_new(self->position, gfc_vector3d(1, 1, 1));
+	self->collider = box_collider_new(gfc_vector3d(0, 5, 0), gfc_vector3d(1, 1, 1));
 	
 	self->collider->layer = C_PREY;
 
