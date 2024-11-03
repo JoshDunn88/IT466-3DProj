@@ -65,7 +65,29 @@ void check_collisions(Collider* self) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		collided = check_collision(self, _entity_manager.entityList[i].collider);
 		if (collided) slog("collided");
-		//if (collided) do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
+
+		if (collided && !self->isTrigger) {
+			do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
+			return;
+		}
+		//redo this horrendous shit later
+		if (self->isTrigger) {
+			if (collided){
+				if (!self->triggerActive) {
+					self->onTriggerEnter(self, _entity_manager.entityList[i].collider);
+					self->triggerActive = 1;
+					return;
+				}
+				self->whileTrigger(self, _entity_manager.entityList[i].collider);
+			}
+			else if(self->triggerActive){
+				self->onTriggerExit(self, _entity_manager.entityList[i].collider);
+				self->triggerActive = 0;
+				return;
+			}
+			return;
+		}
+		
 	}
 }
 

@@ -18,6 +18,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 	self->offset = gfc_vector3d(0, 0, 0);
 	//self->scale = gfc_vector3d(1, 1, 1);
 	self->isTrigger = 0;
+	self->triggerActive = 0;
 
 	return self;
 }
@@ -83,10 +84,8 @@ Uint8 check_collision(Collider* self, Collider* other) {
 }
 void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
-	 if (self->isTrigger) {
-		 self->onTriggerEnter(self, other);
-		 return;
-	 }
+	 //should maybe do this in check instead
+	 
 	 /* shouldn't need this collisions dhould be do_collision twice per collision switching self and other
 	 if (other->isTrigger) {
 		 self->onTriggerEnter(other, self);
@@ -111,9 +110,9 @@ void collider_update(Collider* self) {
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
-	self->primitive.s.b.x += self->velocity.x;
-	self->primitive.s.b.y += self->velocity.y;
-	self->primitive.s.b.z += self->velocity.z;
+	self->primitive.s.b.x = self->position.x;
+	self->primitive.s.b.y = self->position.y;
+	self->primitive.s.b.z = self->position.z;
 	
 	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }
