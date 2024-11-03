@@ -9,7 +9,7 @@ void player_think(Entity* self);
 void player_update(Entity* self);
 void player_free(Entity* self);
 void player_walk_forward(Entity* self, float magnitude);
-GFC_Vector3D offsetPos = { 0 };
+
 Entity* player_new() 
 {
 	Entity* self;
@@ -119,6 +119,7 @@ void player_walk_forward(Entity* self, float magnitude)
 {
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
+
     w = gfc_vector2d_from_angle(self->rotation.z);
     forward.x = -w.x;
     forward.y = -w.y;
@@ -131,7 +132,7 @@ void cam_follow_player(Entity* self, float offset)
 {
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
-    
+    GFC_Vector3D offsetPos = { 0 };
 
     w = gfc_vector2d_from_angle(self->rotation.z);
     forward.x = w.x;
@@ -144,9 +145,10 @@ void cam_follow_player(Entity* self, float offset)
 
     gfc_vector3d_sub(offsetPos, self->position, forward);
     
-
-    offsetPos.z = 4;
+    gfc_vector3d_copy(forward, self->position);
+    forward.z += 1.5;
+    offsetPos.z += 5;
     slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
-    gf3d_camera_look_at(self->position, &offsetPos);
+    gf3d_camera_look_at(forward, &offsetPos);
     
 }
