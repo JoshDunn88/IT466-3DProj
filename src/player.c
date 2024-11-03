@@ -28,7 +28,7 @@ Entity* player_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
 	self->model = gf3d_model_load("models/dino.model"); //entity's model if it has one
-    self->collider = box_collider_new(self->position, gfc_vector3d(1,1,1));
+    self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
 
 	//behavior
@@ -162,7 +162,7 @@ void cam_follow_player(Entity* self, float offset)
     
     gfc_vector3d_copy(forward, self->position);
     forward.z += 1.5;
-    offsetPos.z += 5;
+    offsetPos.z += 10;
    // slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
     gf3d_camera_look_at(forward, &offsetPos);
     

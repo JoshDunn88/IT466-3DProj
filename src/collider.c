@@ -14,7 +14,10 @@ Collider* collider_setup(GFC_Primitive prim) {
 	self->primitive = prim;
 	self->velocity = gfc_vector3d(0, 0, 0);
 	//change this to account for other prim types later
-	self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
+	if (prim.type == GPT_BOX)
+		self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
+	else if (prim.type == GPT_SPHERE)
+		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
 	self->offset = gfc_vector3d(0, 0, 0);
 	//self->scale = gfc_vector3d(1, 1, 1);
 	self->isTrigger = 0;
@@ -65,13 +68,14 @@ void collider_free(Collider* self) {
 	//expand when adding sector list and other stuff
 }
 
-//TODO make this predictive with velocity not current position
+//TODO make this predictive with velocity not current position?
 Uint8 check_collision(Collider* self, Collider* other) {
 	if (!self || !other) return 0;
 	if (self == other) {
 		//slog("no thats me");
 		return 0;
 	}//do not collide with self
+
 	if (self->primitive.type == GPT_BOX) { // && Layer!= LAYER
 		if (other->primitive.type == GPT_BOX) {
 			return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b);
@@ -79,6 +83,15 @@ Uint8 check_collision(Collider* self, Collider* other) {
 		if (other->primitive.type == GPT_SPHERE)
 			return 0; 
 			//return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b); not implemented yet
+	}
+
+	if (self->primitive.type == GPT_SPHERE) { // && Layer!= LAYER
+		if (other->primitive.type == GPT_BOX) {
+			return 0; //not implemented
+		}
+		if (other->primitive.type == GPT_SPHERE)
+			return gfc_sphere_overlap(self->primitive.s.s, other->primitive.s.s);
+		//return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b); not implemented yet
 	}
 	return 0;
 }
@@ -91,17 +104,23 @@ void do_collision(Collider* self, Collider* other) {
 		 self->onTriggerEnter(other, self);
 	 }
 	 */
-	 //use layers to determine if any body is fixed
-	 GFC_Vector3D distance;
-	 GFC_Vector3D scaledDistance;
-	 gfc_vector3d_sub(distance, self->position, other->position);
-	 gfc_vector3d_normalize(&distance);
-	 gfc_vector3d_scale(scaledDistance, distance, 0.1);
 
-	// GFC_Vector3D distance;
-	 //do physics collision this is definitely wrong
-	 gfc_vector3d_add(self->position, self->position, scaledDistance);
-	 gfc_vector3d_add(other->position, other->position, -scaledDistance);
+	 //THIS IS SPHERE COLLISION IDIOT
+	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
+
+		 GFC_Vector3D distance;
+		 GFC_Vector3D scaledDistance;
+		 gfc_vector3d_sub(distance, self->position, other->position);
+		 gfc_vector3d_normalize(&distance);
+		 //edit scale for collision force/elasticity
+		 gfc_vector3d_scale(scaledDistance, distance, 0.05);
+
+		 //use layers to determine if any body is fixed
+		 if (self->layer != C_WORLD)
+			 gfc_vector3d_add(self->position, self->position, scaledDistance);
+		 if (other->layer != C_WORLD)
+			 gfc_vector3d_add(other->position, other->position, -scaledDistance);
+	 }
 	 
 }
 
