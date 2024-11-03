@@ -10,7 +10,7 @@ typedef struct
 
 static EntityManager _entity_manager = { 0 }; //initialize local global entity manager
 
-void entity_system_close() {
+void entity_system_close(void) {
 
 	entity_clear_all(NULL);
 	if (_entity_manager.entityList) free(_entity_manager.entityList);
@@ -133,7 +133,9 @@ void entity_update(Entity* self)
 
 	if (self->collider) {
 		collider_update(self->collider);
-		self->position = self->collider->position;
+		//I have absoluetely no idea why this is necessary to multiply by, is there a bit shift happening somewhere I don't know about??
+		gfc_vector3d_scale(self->position, self->collider->position, 2);
+		
 	}
 	//meupdate
 	if (self->update) self->update(self);

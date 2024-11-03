@@ -20,7 +20,7 @@ typedef struct Collider_S
 	int*			sectorList; //for spacial division later
 	GFC_Primitive	primitive; //primitive struct including type
 	GFC_Vector3D	velocity; //how much to move per update
-	GFC_Vector3D	position; //how much to move per update
+	GFC_Vector3D	position; //current x,y,z position
 	//removed scale for now
 	GFC_Vector3D	offset; //offset from parent position
 

@@ -13,6 +13,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 
 	self->primitive = prim;
 	self->velocity = gfc_vector3d(0, 0, 0);
+	//change this to account for other prim types later
 	self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
 	self->offset = gfc_vector3d(0, 0, 0);
 	//self->scale = gfc_vector3d(1, 1, 1);

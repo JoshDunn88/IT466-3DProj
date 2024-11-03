@@ -108,7 +108,8 @@ void player_update(Entity* self)
             if (keys[SDL_SCANCODE_SPACE]) {
                 slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
                 slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
-                slog("col pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
+                slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
+                
             }
             return;
         
