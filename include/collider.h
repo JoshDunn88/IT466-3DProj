@@ -3,19 +3,19 @@
 
 #include "gfc_types.h"
 #include "gfc_vector.h"
-#include "entity.h"
+//#include "entity.h"
 #include "gfc_primitives.h"
 
 typedef enum
 {
 	C_DEFAULT,
 	C_PLAYER,
-	C_WORLD,
+	C_WORLD
 }C_Layer;
 
 typedef struct Collider_S
 {
-	Entity*			ent; //entity that owns this collider, might not need this
+	//Entity*			ent; //entity that owns this collider, will break if try to use maybe restructure?
 	int*			sectorList; //for spacial division later
 	GFC_Primitive	primitive; //primitive struct including type
 	GFC_Vector3D	velocity; //how much to move per update

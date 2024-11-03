@@ -23,7 +23,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 Collider* sphere_collider_new( GFC_Vector3D position, float radius ) {
 	
 
-	GFC_Primitive prim;
+	GFC_Primitive prim = { 0 };
 		prim.s.s = gfc_sphere(position.x, position.y, position.z, radius);
 		prim.type = GPT_SPHERE;
 
@@ -35,7 +35,7 @@ Collider* sphere_collider_new( GFC_Vector3D position, float radius ) {
 Collider* plane_collider_new(GFC_Vector3D position, float distance) {
 	
 
-	GFC_Primitive prim;
+	GFC_Primitive prim = { 0 };
 	
 	
 		prim.s.pl = gfc_plane3d(position.x, position.y, position.z, distance);
@@ -47,7 +47,7 @@ Collider* plane_collider_new(GFC_Vector3D position, float distance) {
 Collider* box_collider_new(GFC_Vector3D position, GFC_Vector3D dimensions) {
 	
 
-	GFC_Primitive prim;
+	GFC_Primitive prim = { 0 };
 		prim.s.b = gfc_box(position.x, position.y, position.z, dimensions.x, dimensions.y, dimensions.z);
 		prim.type = GPT_BOX;
 	
@@ -57,7 +57,7 @@ Collider* box_collider_new(GFC_Vector3D position, GFC_Vector3D dimensions) {
 
 Collider* edge_collider_new(GFC_Vector3D position, GFC_Vector3D position2) {
 
-	GFC_Primitive prim;
+	GFC_Primitive prim = { 0 };
 		prim.s.e = gfc_edge3d(position.x, position.y, position.z, position2.x, position2.y, position2.z);
 		prim.type = GPT_EDGE;
 	
@@ -67,7 +67,7 @@ Collider* edge_collider_new(GFC_Vector3D position, GFC_Vector3D position2) {
 
 Collider* triangle_collider_new(GFC_Vector3D vertex1, GFC_Vector3D vertex2, GFC_Vector3D vertex3) {
 
-	GFC_Primitive prim;
+	GFC_Primitive prim = { 0 };
 	prim.s.t = gfc_triangle(vertex1, vertex2, vertex3);
 	prim.type = GPT_TRIANGLE;
 
