@@ -85,8 +85,18 @@ void do_collision(Collider* self, Collider* other) {
 		 self->onTriggerEnter(other, self);
 	 }
 	 */
+	 //use layers to determine if any body is fixed
+	 GFC_Vector3D distance;
+	 GFC_Vector3D scaledDistance;
+	 gfc_vector3d_sub(distance, self->position, other->position);
+	 gfc_vector3d_normalize(&distance);
+	 gfc_vector3d_scale(scaledDistance, distance, 0.1);
 
-	 //do physics collision
+	// GFC_Vector3D distance;
+	 //do physics collision this is definitely wrong
+	 gfc_vector3d_add(self->position, self->position, scaledDistance);
+	 gfc_vector3d_add(other->position, other->position, -scaledDistance);
+	 
 }
 
 void collider_update(Collider* self) {
