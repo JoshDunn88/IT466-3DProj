@@ -57,7 +57,7 @@ void entity_think_all();
  *
 
 */
-void entity_think_all();
+void entity_update_all();
 
 /*
  * @brief draw all active entities

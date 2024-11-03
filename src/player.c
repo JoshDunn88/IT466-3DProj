@@ -145,8 +145,8 @@ void cam_follow_player(Entity* self, float offset)
     gfc_vector3d_sub(offsetPos, self->position, forward);
     
 
-    //offsetPos.z = 5;
-    //slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
+    offsetPos.z = 4;
+    slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
     gf3d_camera_look_at(self->position, &offsetPos);
     
 }

@@ -9,8 +9,13 @@
 Entity* player_new();
 
 
+/**
+* @brief  lock cam to offset of player position and look at player
+* @param offset Distance to set camera back
+*/
+void cam_follow_player(Entity* self, float offset);
 
-
+void player_walk_forward(Entity* self, float magnitude);
 
 
 

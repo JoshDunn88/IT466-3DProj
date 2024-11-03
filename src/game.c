@@ -119,7 +119,7 @@ int main(int argc,char *argv[])
         //camera work should prob go last - Josh
         //camera updates
         gf3d_camera_controls_update();
-        cam_follow_player(player, 20);
+        cam_follow_player(player, -8);
         gf3d_camera_update_view();
         gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
 
