@@ -94,10 +94,12 @@ void player_update(Entity* self)
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
             /*
+            * TODO: Rotate with mouse, strafe with a/d
             if (keys[SDL_SCANCODE_A])
             {
                 gf3d_camera_walk_right(-moveSpeed);
             }
+            TODO: Jump
             if (keys[SDL_SCANCODE_SPACE])gf3d_camera_move_up(moveSpeed);
           */
 
