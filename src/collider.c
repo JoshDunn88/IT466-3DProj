@@ -13,6 +13,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 
 	self->primitive = prim;
 	self->velocity = gfc_vector3d(0, 0, 0);
+	self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
 	self->offset = gfc_vector3d(0, 0, 0);
 	//self->scale = gfc_vector3d(1, 1, 1);
 	self->isTrigger = 0;
@@ -65,9 +66,14 @@ void collider_free(Collider* self) {
 //TODO make this predictive with velocity not current position
 Uint8 check_collision(Collider* self, Collider* other) {
 	if (!self || !other) return 0;
+	if (self == other) {
+		slog("no thats me");
+		return 0;
+	}//do not collide with self
 	if (self->primitive.type == GPT_BOX) { // && Layer!= LAYER
-		if (other->primitive.type == GPT_BOX)
+		if (other->primitive.type == GPT_BOX) {
 			return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b);
+		}
 		if (other->primitive.type == GPT_SPHERE)
 			return 0; 
 			//return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b); not implemented yet
@@ -100,8 +106,11 @@ void do_collision(Collider* self, Collider* other) {
 }
 
 void collider_update(Collider* self) {
+	GFC_Vector3D oldPos = self->position;
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
+	//move primitive
+	gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }
 
 void set_as_trigger(Collider* self, Uint8 toBeTrigger) {

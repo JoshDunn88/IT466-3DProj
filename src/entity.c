@@ -60,11 +60,12 @@ void entity_think_all()
 
 void check_collisions(Collider* self) {
 	int i;
-	Uint8 collided;
+	Uint8 collided = 0;
 	for (int i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		collided = check_collision(self, _entity_manager.entityList[i].collider);
-		if (collided) do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
+		if (collided) slog("collided");
+		//if (collided) do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
 	}
 }
 
