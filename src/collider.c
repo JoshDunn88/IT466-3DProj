@@ -110,9 +110,10 @@ void collider_update(Collider* self) {
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
-	self->primitive.s.b.x = self->position.x;
-	self->primitive.s.b.y = self->position.y;
-	self->primitive.s.b.z = self->position.z;
+	self->primitive.s.b.x += self->velocity.x;
+	self->primitive.s.b.y += self->velocity.y;
+	self->primitive.s.b.z += self->velocity.z;
+	
 	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }
 

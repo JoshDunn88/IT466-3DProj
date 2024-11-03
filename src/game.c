@@ -104,7 +104,7 @@ int main(int argc,char *argv[])
     gf3d_camera_set_move_step(0.2);
     gf3d_camera_set_rotate_step(0.05);
     
-    gf3d_camera_enable_free_look(1);
+    gf3d_camera_enable_free_look(0);
     gf3d_camera_set_auto_pan(0);
     //windows
 

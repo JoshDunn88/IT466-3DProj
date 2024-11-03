@@ -104,9 +104,12 @@ void player_update(Entity* self)
                 gf3d_camera_walk_right(-moveSpeed);
             }
             TODO: Jump
-            if (keys[SDL_SCANCODE_SPACE])gf3d_camera_move_up(moveSpeed);
-          */
-
+            */
+            if (keys[SDL_SCANCODE_SPACE]) {
+                slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+                slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
+                slog("col pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
+            }
             return;
         
        
