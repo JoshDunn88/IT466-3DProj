@@ -84,7 +84,7 @@ void set_as_trigger(Collider* self, Uint8 toBeTrigger);
  * @brief check collisions for this object and all others nearby
  * @param self this collider
 */
-void check_collisions(Collider* self);
+//void check_collisions(Collider* self); gonna do this in entity instead
 
 /*
  * @brief test if this object colliding with other

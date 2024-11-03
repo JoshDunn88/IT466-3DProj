@@ -76,7 +76,21 @@ Collider* triangle_collider_new(GFC_Vector3D vertex1, GFC_Vector3D vertex2, GFC_
 
 void collider_free(Collider* self) {
 	//expand when adding sector list and other stuff
-	free(self);
+}
+
+//TODO
+Uint8 check_collision(Collider* self, Collider* other) {
+	if (!self || !other) return;
+	if (self->primitive.type == GPT_BOX) {
+		if (other->primitive.type == GPT_BOX)
+			return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b);
+		if (other->primitive.type == GPT_SPHERE)
+			return 0; 
+			//return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b); not implemented yet
+	}
+}
+void do_collision(Collider* self, Collider* other) {
+
 }
 
 void collider_update(Collider* self) {

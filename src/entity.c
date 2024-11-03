@@ -58,6 +58,16 @@ void entity_think_all()
 	}
 }
 
+void check_collisions(Collider* self) {
+	int i;
+	Uint8 collided;
+	for (int i = 0; i < _entity_manager.entityMax; i++) {
+		if (!_entity_manager.entityList[i]._inuse) continue;
+		collided = check_collision(self, _entity_manager.entityList[i].collider);
+		if (collided) do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
+	}
+}
+
 void entity_update_all()
 {
 	int i;
@@ -87,7 +97,7 @@ Entity* entity_new()
 		memset(&_entity_manager.entityList[i], 0, sizeof(Entity));
 		_entity_manager.entityList[i]._inuse = 1;
 		_entity_manager.entityList[i].scale = gfc_vector3d(1, 1, 1);
-		//_entity_manager.entityList[i].collider = collider_new();
+		_entity_manager.entityList[i].collider = NULL;
 		//_entity_manager.entityList[i].velocity = gfc_vector3d(0, 0, 0);
 		return &_entity_manager.entityList[i];
 	}
@@ -100,7 +110,7 @@ void entity_free(Entity* self)
 {
 	if (!self) return;
 	gf3d_model_free(self->model);
-	if (self->collider) collider_free(self->collider);
+	if (self->collider) free(self->collider);
 	//free anthing special that may have been allocated FOR this
 	if (self->free) self->free(self->data);
 }
@@ -118,6 +128,8 @@ void entity_update(Entity* self)
 	if (!self) return;
 	//basic think stuff here before self update
 	//physics movement
+	check_collisions(self->collider);
+
 	if (self->collider) {
 		collider_update(self->collider);
 		self->position = self->collider->position;
@@ -150,7 +162,10 @@ void entity_draw(Entity *self)
 		GFC_COLOR_WHITE,
 		0
 	);
-
+	//draw bounding box
+	if (!self->collider)return;
+	if (self->collider->primitive.type==GPT_BOX) gf3d_draw_cube_solid(self->collider->primitive.s.b, self->collider->position, gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.8, 0.2, 0.1, 0.4));
+	//if (self->collider->primitive.type == GPT_SPHERE) gf3d_draw_sphere_solid(self->collider->primitive.s.s, self->collider->position, gfc_vector3d(0, 0, 0), gfc_vector3d(2, 2, 2), gfc_color(0.8, 0.5, 0.1, 0.4), gfc_color(0, 0, 0, 0));
 
 }
 
