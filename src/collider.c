@@ -124,8 +124,9 @@ void do_collision(Collider* self, Collider* other) {
 		 gfc_vector3d_sub(boxDistance, self->position, other->position);
 		 gfc_vector3d_normalize(&boxDistance);
 		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
-		 float border = 0.95;
+		 float border = 0.94;
 
+		 //change else and if structuring later to fix snapping with y corners? depends on border and order of pushes
 		 if (self->primitive.s.b.z > other->primitive.s.b.z + other->primitive.s.b.d * border) {
 			 if (self->layer != C_WORLD)
 				 self->position.z += boxDistance.z;
@@ -134,9 +135,9 @@ void do_collision(Collider* self, Collider* other) {
 		 }
 		else if (other->primitive.s.b.z > self->primitive.s.b.z + self->primitive.s.b.d * border) {
 			 if (self->layer != C_WORLD)
-				 self->position.z -= boxDistance.z;
+				 self->position.z += boxDistance.z;
 			 if (other->layer != C_WORLD)
-				other->position.z += boxDistance.z;
+				other->position.z -= boxDistance.z;
 		 }
 		 else if (self->primitive.s.b.x > other->primitive.s.b.x + other->primitive.s.b.w * border) {
 			 if (self->layer != C_WORLD)
@@ -146,9 +147,9 @@ void do_collision(Collider* self, Collider* other) {
 		 }
 		 else if (other->primitive.s.b.x > self->primitive.s.b.x + self->primitive.s.b.w * border) {
 			 if (self->layer != C_WORLD)
-				 self->position.x -= boxDistance.x;
+				 self->position.x += boxDistance.x;
 			 if (other->layer != C_WORLD)
-				 other->position.x += boxDistance.x;
+				 other->position.x -= boxDistance.x;
 		 }
 
 		 else if (self->primitive.s.b.y > other->primitive.s.b.y + other->primitive.s.b.h * border) {
@@ -159,9 +160,9 @@ void do_collision(Collider* self, Collider* other) {
 		 }
 		 else if (other->primitive.s.b.y > self->primitive.s.b.y + self->primitive.s.b.h * border) {
 			 if (self->layer != C_WORLD)
-				 self->position.y -= boxDistance.y;
+				 self->position.y += boxDistance.y;
 			 if (other->layer != C_WORLD)
-				 other->position.y += boxDistance.y;
+				 other->position.y -= boxDistance.y;
 		 } 
 	 } 
 }
