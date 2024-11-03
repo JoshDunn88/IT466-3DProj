@@ -3,6 +3,7 @@
 #include "gf3d_camera.h"
 
 #include "player.h"
+#include "gfc_primitives.h" //shouldn't need this
 
 
 void player_think(Entity* self);
@@ -27,6 +28,8 @@ Entity* player_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
 	self->model = gf3d_model_load("models/dino.model"); //entity's model if it has one
+    self->collider = box_collider_new(self->position, gfc_vector3d(1,1,1));
+    self->collider->layer = C_PLAYER;
 
 	//behavior
 	self->think = player_think;
@@ -76,7 +79,8 @@ void player_update(Entity* self)
             }
             else
             {
-                self->velocity = gfc_vector3d(0,0,0);
+                if (self->collider)
+                    self->collider->velocity = gfc_vector3d(0,0,0);
             }
             
             if (keys[SDL_SCANCODE_S])
@@ -119,6 +123,10 @@ void player_move(Entity* self, GFC_Vector3D translation)
 }
 void player_walk_forward(Entity* self, float magnitude)
 {
+    if (!self->collider) {
+        slog("player has no collider to move");
+        return;
+    }
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
 
@@ -126,7 +134,8 @@ void player_walk_forward(Entity* self, float magnitude)
     forward.x = -w.x;
     forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
-    self->velocity = forward;
+    
+    self->collider->velocity = forward;
 
 }
 

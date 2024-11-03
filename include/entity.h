@@ -5,13 +5,14 @@
 #include "gfc_text.h"
 #include "gfc_vector.h"
 #include "gf3d_model.h"
+#include "collider.h"
 
 typedef struct Entity_S
 {
-	//entity's model if it has one
-	Model* model;
+	
+	Model*			model; // entity's model if it has one
+	Collider*		collider;
 	GFC_Vector3D	position;
-	GFC_Vector3D	velocity; //how much entity moves per update
 	GFC_Vector3D	rotation;
 	GFC_Vector3D	scale;
 	GFC_TextLine	name;
@@ -38,7 +39,7 @@ void entity_system_close();
 
 /*
  * @brief clean up active entities
- * @param ignore do not clean this up, maxEnts how many entities can exist at the same time
+ * @param ignore do not clean this up
 */
 void entity_clear_all(Entity* ignore);
 
@@ -61,7 +62,6 @@ void entity_update_all();
 
 /*
  * @brief draw all active entities
- * @param 
 
 */
 void entity_draw_all();

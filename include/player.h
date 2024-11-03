@@ -11,6 +11,7 @@ Entity* player_new();
 
 /**
 * @brief  lock cam to offset of player position and look at player
+* @param self entity to follow
 * @param offset Distance to set camera back
 */
 void cam_follow_player(Entity* self, float offset);
