@@ -172,6 +172,7 @@
     <ClCompile Include="..\gfc\src\miniz.c" />
     <ClCompile Include="..\src\collider.c" />
     <ClCompile Include="..\src\entity.c" />
+    <ClCompile Include="..\src\environment.c" />
     <ClCompile Include="..\src\game.c" />
     <ClCompile Include="..\src\gf2d_actor.c" />
     <ClCompile Include="..\src\gf2d_draw.c" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h" />
     <ClInclude Include="..\include\collider.h" />
     <ClInclude Include="..\include\entity.h" />
+    <ClInclude Include="..\include\environment.h" />
     <ClInclude Include="..\include\gf2d_actor.h" />
     <ClInclude Include="..\include\gf2d_draw.h" />
     <ClInclude Include="..\include\gf2d_font.h" />

@@ -27,6 +27,7 @@ C:\Users\JoshD\source\repos\IT466-3DProj\gfc\src\gfc_vector.c;C:\Users\JoshD\sou
 C:\Users\JoshD\source\repos\IT466-3DProj\gfc\src\miniz.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\miniz.obj
 C:\Users\JoshD\source\repos\IT466-3DProj\src\collider.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\collider.obj
 C:\Users\JoshD\source\repos\IT466-3DProj\src\entity.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\entity.obj
+C:\Users\JoshD\source\repos\IT466-3DProj\src\environment.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\environment.obj
 C:\Users\JoshD\source\repos\IT466-3DProj\src\game.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\game.obj
 C:\Users\JoshD\source\repos\IT466-3DProj\src\gf2d_actor.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\gf2d_actor.obj
 C:\Users\JoshD\source\repos\IT466-3DProj\src\gf2d_draw.c;C:\Users\JoshD\source\repos\IT466-3DProj\win\x64\Release\gf2d_draw.obj

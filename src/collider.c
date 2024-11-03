@@ -81,8 +81,8 @@ Uint8 check_collision(Collider* self, Collider* other) {
 			return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b);
 		}
 		if (other->primitive.type == GPT_SPHERE)
-			return 0; 
-			//return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b); not implemented yet
+			return 0; //not implemented
+		//if (otherother->primitive.type == GPT_PLANE)
 	}
 
 	if (self->primitive.type == GPT_SPHERE) { // && Layer!= LAYER
@@ -98,12 +98,6 @@ Uint8 check_collision(Collider* self, Collider* other) {
 void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
 	 //should maybe do this in check instead
-	 
-	 /* shouldn't need this collisions dhould be do_collision twice per collision switching self and other
-	 if (other->isTrigger) {
-		 self->onTriggerEnter(other, self);
-	 }
-	 */
 
 	 //THIS IS SPHERE COLLISION IDIOT
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
@@ -114,6 +108,7 @@ void do_collision(Collider* self, Collider* other) {
 		 gfc_vector3d_normalize(&distance);
 		 //edit scale for collision force/elasticity
 		 gfc_vector3d_scale(scaledDistance, distance, 0.05);
+		 
 
 		 //use layers to determine if any body is fixed
 		 if (self->layer != C_WORLD)
@@ -121,7 +116,54 @@ void do_collision(Collider* self, Collider* other) {
 		 if (other->layer != C_WORLD)
 			 gfc_vector3d_add(other->position, other->position, -scaledDistance);
 	 }
-	 
+
+	 //THIS IS BOX COLLISION IDIOT
+	 //I probably dont need this in my game at all
+	 if (self->primitive.type == GPT_BOX && other->primitive.type == GPT_BOX) {
+		 GFC_Vector3D boxDistance;
+		 gfc_vector3d_sub(boxDistance, self->position, other->position);
+		 gfc_vector3d_normalize(&boxDistance);
+		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
+		 float border = 0.95;
+
+		 if (self->primitive.s.b.z > other->primitive.s.b.z + other->primitive.s.b.d * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.z += boxDistance.z;
+			 if (other->layer != C_WORLD)
+				 other->position.z -= boxDistance.z;
+		 }
+		else if (other->primitive.s.b.z > self->primitive.s.b.z + self->primitive.s.b.d * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.z -= boxDistance.z;
+			 if (other->layer != C_WORLD)
+				other->position.z += boxDistance.z;
+		 }
+		 else if (self->primitive.s.b.x > other->primitive.s.b.x + other->primitive.s.b.w * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.x += boxDistance.x;
+			 if (other->layer != C_WORLD)
+				 other->position.x -= boxDistance.x;
+		 }
+		 else if (other->primitive.s.b.x > self->primitive.s.b.x + self->primitive.s.b.w * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.x -= boxDistance.x;
+			 if (other->layer != C_WORLD)
+				 other->position.x += boxDistance.x;
+		 }
+
+		 else if (self->primitive.s.b.y > other->primitive.s.b.y + other->primitive.s.b.h * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.y += boxDistance.y;
+			 if (other->layer != C_WORLD)
+				 other->position.y -= boxDistance.y;
+		 }
+		 else if (other->primitive.s.b.y > self->primitive.s.b.y + self->primitive.s.b.h * border) {
+			 if (self->layer != C_WORLD)
+				 self->position.y -= boxDistance.y;
+			 if (other->layer != C_WORLD)
+				 other->position.y += boxDistance.y;
+		 } 
+	 } 
 }
 
 void collider_update(Collider* self) {
