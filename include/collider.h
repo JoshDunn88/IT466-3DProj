@@ -31,7 +31,7 @@ typedef struct Collider_S
 
 	//behavior
 	void (*onTriggerEnter) (struct Collider_S* self, struct Collider_S* other); //called when another collider enters the trigger
-	void (*onTriggerExit) (struct Collider_S* self, struct Collider_S* other); //called when another collider exits the trigger
+//	void (*onTriggerExit) (struct Collider_S* self, struct Collider_S* other); //called when another collider exits the trigger probably don't need this, might for hiding bushes though
 }Collider;
 
 
@@ -112,7 +112,8 @@ void collider_update(Collider* self);
 
 
 
-
+//TODO Raycast
+//TODO sphere and box collision
 
 
 
