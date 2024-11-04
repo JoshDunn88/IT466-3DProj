@@ -14,12 +14,15 @@ Collider* collider_setup(GFC_Primitive prim) {
 	self->primitive = prim;
 	self->velocity = gfc_vector3d(0, 0, 0);
 	//change this to account for other prim types later
-	if (prim.type == GPT_BOX)
+	if (prim.type == GPT_BOX) {
+		self->scale = gfc_vector3d(prim.s.b.w, prim.s.b.h, prim.s.b.d);
 		self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
+	}
 	else if (prim.type == GPT_SPHERE)
 		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
 	self->offset = gfc_vector3d(0, 0, 0);
 	self->gravity = 0;
+
 	//self->scale = gfc_vector3d(1, 1, 1);
 	self->isTrigger = 0;
 	self->triggerActive = 0;

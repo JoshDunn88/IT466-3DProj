@@ -31,7 +31,7 @@ Entity* player_new()
     self->collider = box_collider_new(self->position, gfc_vector3d(1, 1, 1));
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
-    self->collider->gravity = 0.0;
+    self->collider->gravity = 0.00;
 	//behavior
 	self->think = player_think;
 	self->update = player_update; 
@@ -63,25 +63,18 @@ void player_update(Entity* self)
 
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
 
-      
+        //dont walk with no input, gravity applies after so its fine
+        if (self->collider)
+            self->collider->velocity = gfc_vector3d(0, 0, 0);
+
             if (keys[SDL_SCANCODE_A])
             {
-               // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
-                self->rotation.z+= 0.02;
-                gfc_angle_clamp_radians(&self->rotation.z);
-                slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+                player_walk_right(self, moveSpeed);
             }
          
             if (keys[SDL_SCANCODE_W])
             {
                 player_walk_forward(self, moveSpeed);
-            }
-            else
-            {
-                if (self->collider)
-                    self->collider->velocity = gfc_vector3d(0,0,0);
             }
             
             if (keys[SDL_SCANCODE_S])
@@ -91,22 +84,42 @@ void player_update(Entity* self)
             
             if (keys[SDL_SCANCODE_D])
             {
+                player_walk_right(self, -moveSpeed);
+            }
+
+            if (keys[SDL_SCANCODE_Q])
+            {
                 // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
-                self->rotation.z -= 0.01;
+                self->rotation.z += 0.02;
                 gfc_angle_clamp_radians(&self->rotation.z);
                 slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
+
+            if (keys[SDL_SCANCODE_E])
+            {
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.z -= 0.02;
+                gfc_angle_clamp_radians(&self->rotation.z);
+                slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+            }
+
+            if (keys[SDL_SCANCODE_SPACE])
+            {
+                player_move_up(self, moveSpeed);
+            }
             /*
             * TODO: Rotate with mouse, strafe with a/d
-            if (keys[SDL_SCANCODE_A])
+            if (keys[SDL_SCANCODE_SPACE])
             {
                 gf3d_camera_walk_right(-moveSpeed);
             }
             TODO: Jump
             */
-            if (keys[SDL_SCANCODE_SPACE]) {
+            if (keys[SDL_SCANCODE_U]) {
                 slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
                 slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
                 slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
@@ -122,10 +135,11 @@ void player_free(Entity* self)
 	if (!self) return;
 }
 
-void player_move(Entity* self, GFC_Vector3D translation)
+void player_move_up(Entity* self, float magnitude)
 {
-    gfc_vector3d_sub(self->position, self->position, translation);
+    self->collider->velocity.z= magnitude;
 }
+
 void player_walk_forward(Entity* self, float magnitude)
 {
     if (!self->collider) {
@@ -144,6 +158,23 @@ void player_walk_forward(Entity* self, float magnitude)
 
 }
 
+void player_walk_right(Entity* self, float magnitude)
+{
+    if (!self->collider) {
+        slog("player has no collider to move");
+        return;
+    }
+    GFC_Vector2D w;
+    GFC_Vector3D right = { 0 };
+
+    w = gfc_vector2d_from_angle(self->rotation.z + GFC_HALF_PI);
+    right.x = -w.x;
+    right.y = -w.y;
+    gfc_vector3d_set_magnitude(&right, magnitude);
+
+    self->collider->velocity = right;
+
+}
 void cam_follow_player(Entity* self, float offset) 
 {
     GFC_Vector2D w;

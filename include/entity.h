@@ -44,7 +44,7 @@ void entity_system_close();
 */
 void entity_clear_all(Entity* ignore);
 
-
+void check_collisions(Collider* self);
 
 
 /*

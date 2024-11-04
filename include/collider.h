@@ -17,13 +17,14 @@ typedef enum
 typedef struct Collider_S
 {
 	//Entity*			ent; //entity that owns this collider, will break if try to use maybe restructure?
-	int*			sectorList; //for spacial division later
+	//int*			sectorList; //for spacial division later
 	GFC_Primitive	primitive; //primitive struct including type
 	GFC_Vector3D	velocity; //how much to move per update
 	GFC_Vector3D	position; //current x,y,z position
-	float			gravity;
-	//removed scale for now
+	
+	GFC_Vector3D	scale;
 	GFC_Vector3D	offset; //offset from parent position
+	float			gravity;
 
 	C_Layer			layer;
 	Uint8			isTrigger;	//collide or trigger activation
@@ -38,7 +39,7 @@ typedef struct Collider_S
 	void (*whileTrigger) (struct Collider_S* self, struct Collider_S* other); //called while in trigger after entry before exit
 }Collider;
 
-
+Collider* collider_setup(GFC_Primitive prim);
 
 /*
  * @brief create new collider for spheres and planes

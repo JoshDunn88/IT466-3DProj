@@ -27,5 +27,8 @@ typedef struct Prey_Data_S
 */
 Entity* prey_new();
 
+void prey_think(Entity* self);
+void prey_update(Entity* self);
+void prey_free(Entity* self);
 
 #endif
