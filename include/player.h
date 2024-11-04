@@ -2,6 +2,20 @@
 #define __PLAYER_H_
 
 #include "entity.h"
+
+typedef struct Player_Data_S
+{
+	int				health;
+	int				prey_eaten;
+
+}Player_Data;
+
+/**
+* @brief  maka da playa data
+* @return player data pointer or NULL on failure
+*/
+Player_Data* player_data_new();
+
 /**
 * @brief  maka da playa
 * @return player ent, or NULL on failure

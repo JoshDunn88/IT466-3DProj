@@ -11,6 +11,18 @@ void player_update(Entity* self);
 void player_free(Entity* self);
 void player_walk_forward(Entity* self, float magnitude);
 
+Player_Data* player_data_new() {
+    Player_Data* data = malloc(sizeof(Player_Data));
+
+    if (!data) {
+        slog("failed to create player data");
+        return NULL;
+    }
+    data->health = 100;
+    data->prey_eaten = 0;
+    return data;
+}
+
 Entity* player_new() 
 {
 	Entity* self;
@@ -37,7 +49,7 @@ Entity* player_new()
 	self->update = player_update; 
 	self->free = player_free; 
 	self->draw = NULL; 
-	self->data = NULL;                            //entity custom data beyond basics
+	self->data = player_data_new();                            //entity custom data beyond basics
 
 	return self;
 }
@@ -135,9 +147,10 @@ void player_update(Entity* self)
        
     
 }
-void player_free(Entity* self)
+void player_free(void* data)
 {
-	if (!self) return;
+	if (!data) return;
+    free(data);
 }
 
 void player_move_up(Entity* self, float magnitude)

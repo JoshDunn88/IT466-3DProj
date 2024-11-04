@@ -62,17 +62,22 @@ void prey_eaten(Collider* self, Collider* other) {
 		return;
 	}
 
-	Entity* selfEnt;
-	selfEnt = entity_get_by_collider(self);
-	if (!selfEnt) {
-		slog("failed to get entity");
-		return;
-	}
-
 	if (other->layer != C_PLAYER) {
 		slog("you cant eat me");
 		return;
 	}
+
+	Entity* selfEnt;
+	Entity* playerEnt;
+	selfEnt = entity_get_by_collider(self);
+	playerEnt = entity_get_by_collider(other);
+
+	if (!selfEnt||!playerEnt) {
+		slog("failed to get entity");
+		return;
+	}
+
+	
 	
 	//this is probably bad
 	if (selfEnt->alive) {
