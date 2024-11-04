@@ -93,7 +93,7 @@ void player_update(Entity* self)
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z += 0.02;
                 gfc_angle_clamp_radians(&self->rotation.z);
-                slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
@@ -103,7 +103,7 @@ void player_update(Entity* self)
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z -= 0.02;
                 gfc_angle_clamp_radians(&self->rotation.z);
-                slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+               // slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
