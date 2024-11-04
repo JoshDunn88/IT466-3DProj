@@ -22,8 +22,8 @@ typedef struct Collider_S
 	GFC_Vector3D	velocity; //how much to move per update
 	GFC_Vector3D	position; //current x,y,z position
 	float			gravity;
-	//removed scale for now
-	GFC_Vector3D	offset; //offset from parent position
+	GFC_Vector3D	scale; //scale
+	//GFC_Vector3D	offset; //offset from parent position
 
 	C_Layer			layer;
 	Uint8			isTrigger;	//collide or trigger activation
@@ -44,7 +44,7 @@ typedef struct Collider_S
  * @brief create new collider for spheres and planes
  * @param type type of primitive to set
  * @param position origin of primitive
- * @param parameter radius or distance 
+ * @param radius circle radius
  * @return self this collider
 */
 Collider* sphere_collider_new( GFC_Vector3D position, float radius);
@@ -55,7 +55,7 @@ Collider* plane_collider_new(GFC_Vector3D position, float distance);
  * @brief create new collider for boxes and edges
  * @param type type of primitive to set
  * @param position origin of primitive
- * @param position2 2nd position or dimensions
+ * @param dimensions box dimensions
  * @return self this collider
 */
 Collider* box_collider_new( GFC_Vector3D position, GFC_Vector3D dimensions);
@@ -113,7 +113,7 @@ void do_collision(Collider* self, Collider* other);
 void collider_update(Collider* self);
 
 
-
+void primitive_update(Collider* self);
 
 
 //TODO Raycast

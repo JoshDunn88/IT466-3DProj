@@ -23,15 +23,17 @@ Entity* player_new()
 
 	
 	//self->name = "playerr";
-	
-	self->position = gfc_vector3d(0, 0, 0);
-	self->rotation = gfc_vector3d(0, 0, 0);
-	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
-	self->model = gf3d_model_load("models/dino.model"); 
+    self->rotation = gfc_vector3d(0, 0, 0);
+    self->scale = gfc_vector3d(0.5, 0.5, 0.5);
+    self->model = gf3d_model_load("models/dino.model");
+    self->position = gfc_vector3d(0, 0, 0);
+   
+    
     self->collider = box_collider_new(self->position, gfc_vector3d(1, 1, 1));
+
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
-    self->collider->gravity = 0.0;
+    self->collider->gravity = 0.00;
 	//behavior
 	self->think = player_think;
 	self->update = player_update; 
@@ -49,7 +51,7 @@ void player_think(Entity* self)
 }
 void player_update(Entity* self)
 {
-    float moveSpeed = 0.05;
+    float moveSpeed = 0.075;
     GFC_Vector3D position, rotation;
     const Uint8* keys;
 

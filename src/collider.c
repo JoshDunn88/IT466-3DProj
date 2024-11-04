@@ -12,15 +12,16 @@ Collider* collider_setup(GFC_Primitive prim) {
 	}
 
 	self->primitive = prim;
+	self->scale = gfc_vector3d(prim.s.b.w, prim.s.b.h, prim.s.b.d);
 	self->velocity = gfc_vector3d(0, 0, 0);
 	//change this to account for other prim types later
 	if (prim.type == GPT_BOX)
-		self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
+		self->position = gfc_vector3d(prim.s.b.x + prim.s.b.w/2, prim.s.b.y + prim.s.b.h / 2, prim.s.b.z + prim.s.b.d / 2);
 	else if (prim.type == GPT_SPHERE)
 		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
-	self->offset = gfc_vector3d(0, 0, 0);
+
 	self->gravity = 0;
-	//self->scale = gfc_vector3d(1, 1, 1);
+	
 	self->isTrigger = 0;
 	self->triggerActive = 0;
 
@@ -44,7 +45,7 @@ Collider* plane_collider_new(GFC_Vector3D position, float distance) {
 
 Collider* box_collider_new(GFC_Vector3D position, GFC_Vector3D dimensions) {
 	GFC_Primitive prim = { 0 };
-		prim.s.b = gfc_box(position.x, position.y, position.z, dimensions.x, dimensions.y, dimensions.z);
+		prim.s.b = gfc_box(position.x - dimensions.x/2, position.y - dimensions.y/2, position.z - dimensions.z/2, dimensions.x, dimensions.y, dimensions.z);
 		prim.type = GPT_BOX;
 	return collider_setup(prim);
 }
@@ -98,7 +99,7 @@ Uint8 check_collision(Collider* self, Collider* other) {
 }
 void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
-	 //should maybe do this in check instead
+	 //should do multiple collision iterations per frame?
 
 	 //THIS IS SPHERE 
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
@@ -161,7 +162,11 @@ void do_collision(Collider* self, Collider* other) {
 			 return;
 		 }
 	 }
+	 /*
+	 do multiple iterations with substep velocity later on
+	*/
 	 
+
 }
 
 void collider_update(Collider* self) {
@@ -170,11 +175,21 @@ void collider_update(Collider* self) {
 	if (self->velocity.z > -1) self->velocity.z-= self->gravity;
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
+	primitive_update(self);
+	
+	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
+}
+
+void primitive_update(Collider* self) {
+	if (self->primitive.type == GPT_BOX) {
+		self->primitive.s.b.x = self->position.x - self->primitive.s.b.w/2;
+		self->primitive.s.b.y = self->position.y - self->primitive.s.b.h / 2;
+		self->primitive.s.b.z = self->position.z - self->primitive.s.b.d / 2;
+		return;
+	}
 	self->primitive.s.b.x = self->position.x;
 	self->primitive.s.b.y = self->position.y;
 	self->primitive.s.b.z = self->position.z;
-	
-	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }
 
 void set_as_trigger(Collider* self, Uint8 toBeTrigger) {
