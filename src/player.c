@@ -57,6 +57,9 @@ Entity* player_new()
 void player_think(Entity* self)
 {
 	if (!self) return;
+    Player_Data* dat = (struct Player_Data*)(self->data);
+    if (!dat) return;
+    slog("health: %i, consumed: %i", dat->health, dat->prey_eaten);
 
 }
 void player_update(Entity* self)

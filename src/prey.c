@@ -1,5 +1,6 @@
 #include "simple_logger.h"
 #include "prey.h"
+#include "player.h"
 
 void prey_think(Entity* self);
 void prey_update(Entity* self);
@@ -77,12 +78,13 @@ void prey_eaten(Collider* self, Collider* other) {
 		return;
 	}
 
-	
+	Player_Data* dat = (struct Player_Data*)(playerEnt->data);
 	
 	//this is probably bad
 	if (selfEnt->alive) {
 		slog("i've been eaten");
 		selfEnt->alive = 0;
+		dat->prey_eaten++;
 		return;
 	}
 	slog("why am i here");
