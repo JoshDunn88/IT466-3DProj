@@ -11,6 +11,7 @@ typedef enum
 	C_DEFAULT,
 	C_PLAYER,
 	C_PREY,
+	C_PREDATOR,
 	C_WORLD
 }C_Layer;
 

@@ -110,6 +110,8 @@ int main(int argc,char *argv[])
     prey4 = prey_new();
     prey3->collider->position.y = 3;
     prey4->collider->position.y = 7;
+    prey4->collider->layer = C_PREDATOR;
+    prey4->collider->isTrigger = 0;
 
     ground = environment_new();
     //health = gfc_string("Health: ");
@@ -141,6 +143,7 @@ int main(int argc,char *argv[])
         entity_update_all();
 
         //make function later
+        if (!player->alive) dat->health = 0;
         sprintf(&healthVal, "%i", dat->health);
         sprintf(&foodVal, "%i", dat->prey_eaten);
         sprintf(&speed, "%f", gfc_vector3d_magnitude(player->collider->velocity));

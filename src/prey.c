@@ -37,7 +37,7 @@ Entity* prey_new()
 
 	//behavior
 	//self->think = prey_think;
-	//self->update = prey_update;
+	self->update = prey_update;
 	//self->free = prey_free;
 	self->draw = NULL;
 	self->data = NULL;                            //entity custom data beyond basics
@@ -49,7 +49,21 @@ void prey_think(Entity* self) {
 
 }
 void prey_update(Entity* self) {
-	
+	GFC_Vector3D position1, position2;
+	if (!self || !self->collider) return;
+	if (self->collider->layer != C_PREDATOR) return;
+	position2 = gfc_vector3d(-5, 7, 0);
+	position1 = gfc_vector3d(5, 7, 0);
+	if (self->collider->velocity.x == 0) self->collider->velocity.x = -0.01;
+	if (self->collider->position.x > position1.x) {
+		self->collider->position.x = position1.x;
+		self->collider->velocity.x = -0.01;
+	}
+	else if (self->collider->position.x < position2.x) {
+		self->collider->position.x = position2.x;
+		self->collider->velocity.x = 0.01;
+	}
+		
 }
 void prey_free(Entity* self) {
 

@@ -103,6 +103,8 @@ void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
 	 //should maybe do this in check instead
 
+	 //special cases
+	
 	 //THIS IS SPHERE 
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
 

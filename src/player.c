@@ -72,6 +72,7 @@ void player_update(Entity* self)
     GFC_Vector3D position, rotation;
     const Uint8* keys;
 	if (!self) return;
+    if (!self->collider) return;
     /*
 	self->position = gfc_vector3d_added(self->position, gfc_vector3d(0, 0, 0.2));
 	if (self->position.z > 60)
@@ -163,6 +164,13 @@ void player_update(Entity* self)
                 slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
                 slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
                 
+            }
+
+            if (keys[SDL_SCANCODE_R]) {
+                self->alive = 1;
+                self->collider->position = gfc_vector3d(0, 0, 0);
+                Player_Data* dat = (struct Player_Data*)(self->data);
+                dat->health = 100;
             }
           
             return;

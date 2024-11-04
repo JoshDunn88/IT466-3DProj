@@ -49,6 +49,10 @@ void check_collisions(Collider* self) {
 		if (collided) slog("collided");
 
 		if (collided && !self->isTrigger) {
+			//die
+			if (self->layer == C_PREDATOR && _entity_manager.entityList[i].collider->layer == C_PLAYER){
+				_entity_manager.entityList[i].alive = 0;
+				}
 			do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
 			continue;
 		}
@@ -216,9 +220,10 @@ void entity_draw(Entity *self)
 	//draw bounding box
 	if (!self->collider)return;
 	mineColor = gfc_color(0.5, 0.5, 0.4, 0.5);
-	if (self->collider->layer == C_WORLD) mineColor = gfc_color(0.8, 0.5, 0.1, 1);
+	if (self->collider->layer == C_WORLD) mineColor = gfc_color(0.8, 0.5, 0.2, 1);
 	if (self->collider->layer == C_PLAYER) mineColor = gfc_color(0.1, 0.2, 0.8, 0.4);
 	if (self->collider->layer == C_PREY) mineColor = gfc_color(0.1, 0.8, 0.2, 0.4);
+	if (self->collider->layer == C_PREDATOR) mineColor = gfc_color(0.9, 0.1, 0.1, 0.4);
 	if (self->collider->primitive.type == GPT_BOX) {
 		//if (self->collider->layer == C_PLAYER) slog("prim before: %f, %f, %f, %f, %f, %f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z, self->collider->primitive.s.b.w, self->collider->primitive.s.b.h, self->collider->primitive.s.b.d);
 		gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z), gfc_vector3d(0, 0, 0), self->collider->scale, mineColor);
