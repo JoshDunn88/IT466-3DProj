@@ -31,7 +31,7 @@ Entity* player_new()
     self->collider = box_collider_new(self->position, gfc_vector3d(1, 1, 1));
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
-    self->collider->gravity = 0.01;
+    self->collider->gravity = 0.0;
 	//behavior
 	self->think = player_think;
 	self->update = player_update; 
@@ -162,8 +162,8 @@ void cam_follow_player(Entity* self, float offset)
     gfc_vector3d_sub(offsetPos, self->position, forward);
     
     gfc_vector3d_copy(forward, self->position);
-    forward.z += 0;
-    offsetPos.z += 0;
+    forward.z += 1;
+    offsetPos.z += 4;
    // slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
     gf3d_camera_look_at(forward, &offsetPos);
     

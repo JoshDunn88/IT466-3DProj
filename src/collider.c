@@ -108,7 +108,7 @@ void do_collision(Collider* self, Collider* other) {
 		 gfc_vector3d_sub(distance, self->position, other->position);
 		 gfc_vector3d_normalize(&distance);
 		 //edit scale for collision force/elasticity
-		 gfc_vector3d_scale(scaledDistance, distance, 0.05);
+		 gfc_vector3d_scale(scaledDistance, distance, 0.035);
 		 
 
 		 //use layers to determine if any body is fixed
@@ -119,59 +119,49 @@ void do_collision(Collider* self, Collider* other) {
 	 }
 
 	 //THIS IS BOX 
+	 //the concept of minimum overlap came from https://youtu.be/oOEnWQZIePs?si=ZMblmzP0ep0f-bJT
 	 if (self->primitive.type == GPT_BOX && other->primitive.type == GPT_BOX) {
 		 GFC_Vector3D boxDistance;
 		 gfc_vector3d_sub(boxDistance, self->position, other->position);
+		 
+		 float xDist = SDL_fabsf(boxDistance.x);
+		 float yDist = SDL_fabsf(boxDistance.y);
+		 float zDist = SDL_fabsf(boxDistance.z);
+		 slog("dists: x %f, t %f, z %f", xDist, yDist, zDist);
+		 float* max;
+		 max = &xDist;
+		 if (yDist > *max) max = &yDist;
+		 if (zDist > *max) max = &zDist;
+		 slog("max %f", &max);
 		 gfc_vector3d_normalize(&boxDistance);
 		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
-		 float border;
-		 for (border = 0.98; border >= 0.75; border -= 0.01) {
-			 //change else and if structuring later to fix snapping with y corners? depends on border and order of pushes
-			 if (self->primitive.s.b.z > other->primitive.s.b.z + other->primitive.s.b.d * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.z += boxDistance.z;
-				 if (other->layer != C_WORLD)
-					 other->position.z -= boxDistance.z;
-				 return;
-			 }
-			 else if (other->primitive.s.b.z > self->primitive.s.b.z + self->primitive.s.b.d * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.z += boxDistance.z;
-				 if (other->layer != C_WORLD)
-					 other->position.z -= boxDistance.z;
-				 return;
-			 }
-			 else if (self->primitive.s.b.x > other->primitive.s.b.x + other->primitive.s.b.w * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.x += boxDistance.x;
-				 if (other->layer != C_WORLD)
-					 other->position.x -= boxDistance.x;
-				 return;
-			 }
-			 else if (other->primitive.s.b.x > self->primitive.s.b.x + self->primitive.s.b.w * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.x += boxDistance.x;
-				 if (other->layer != C_WORLD)
-					 other->position.x -= boxDistance.x;
-				 return;
-			 }
-
-			 else if (self->primitive.s.b.y > other->primitive.s.b.y + other->primitive.s.b.h * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.y += boxDistance.y;
-				 if (other->layer != C_WORLD)
-					 other->position.y -= boxDistance.y;
-				 return;
-			 }
-			 else if (other->primitive.s.b.y > self->primitive.s.b.y + self->primitive.s.b.h * border) {
-				 if (self->layer != C_WORLD)
-					 self->position.y += boxDistance.y;
-				 if (other->layer != C_WORLD)
-					 other->position.y -= boxDistance.y;
-				 return;
-			 }
+		 
+		 if (max == &xDist) {
+			 slog("do x");
+			 if (self->layer != C_WORLD)
+				 self->position.x += boxDistance.x;
+			 if (other->layer != C_WORLD)
+				 other->position.x -= boxDistance.x;
+			 return;
+		 }
+		 else if (max == &yDist) {
+			 slog("do y");
+			 if (self->layer != C_WORLD)
+				 self->position.y += boxDistance.y;
+			 if (other->layer != C_WORLD)
+				 other->position.y -= boxDistance.y;
+			 return;
+		 }
+		 else if (max == &zDist) {
+			 slog("do z");
+			 if (self->layer != C_WORLD)
+				 self->position.z += boxDistance.z;
+			 if (other->layer != C_WORLD)
+				 other->position.z -= boxDistance.z;
+			 return;
 		 }
 	 }
+	 
 }
 
 void collider_update(Collider* self) {
