@@ -21,13 +21,14 @@ typedef struct Collider_S
 	GFC_Primitive	primitive; //primitive struct including type
 	GFC_Vector3D	velocity; //how much to move per update
 	GFC_Vector3D	position; //current x,y,z position
+	float			gravity;
 	//removed scale for now
 	GFC_Vector3D	offset; //offset from parent position
 
 	C_Layer			layer;
 	Uint8			isTrigger;	//collide or trigger activation
 	Uint8			triggerActive;	//is something in trigger
-
+	
 
 
 

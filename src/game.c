@@ -28,6 +28,7 @@
 #include "entity.h"
 #include "player.h"
 #include "prey.h"
+#include "environment.h"
 
 
 extern int __DEBUG;
@@ -64,6 +65,7 @@ int main(int argc,char *argv[])
     //local variables
     Entity* player;
     Entity* prey;
+    Entity* ground;
     Model *sky,*dino;
     GFC_Matrix4 skyMat,dinoMat;
     //initializtion    
@@ -97,6 +99,7 @@ int main(int argc,char *argv[])
     
     player = player_new();
     prey = prey_new();
+    ground = environment_new();
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(0,0,5));

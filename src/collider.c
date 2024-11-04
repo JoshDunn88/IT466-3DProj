@@ -19,6 +19,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 	else if (prim.type == GPT_SPHERE)
 		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
 	self->offset = gfc_vector3d(0, 0, 0);
+	self->gravity = 0;
 	//self->scale = gfc_vector3d(1, 1, 1);
 	self->isTrigger = 0;
 	self->triggerActive = 0;
@@ -99,7 +100,7 @@ void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
 	 //should maybe do this in check instead
 
-	 //THIS IS SPHERE COLLISION IDIOT
+	 //THIS IS SPHERE 
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
 
 		 GFC_Vector3D distance;
@@ -117,59 +118,66 @@ void do_collision(Collider* self, Collider* other) {
 			 gfc_vector3d_add(other->position, other->position, -scaledDistance);
 	 }
 
-	 //THIS IS BOX COLLISION IDIOT
-	 //I probably dont need this in my game at all
+	 //THIS IS BOX 
 	 if (self->primitive.type == GPT_BOX && other->primitive.type == GPT_BOX) {
 		 GFC_Vector3D boxDistance;
 		 gfc_vector3d_sub(boxDistance, self->position, other->position);
 		 gfc_vector3d_normalize(&boxDistance);
 		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
-		 float border = 0.94;
+		 float border;
+		 for (border = 0.98; border >= 0.75; border -= 0.01) {
+			 //change else and if structuring later to fix snapping with y corners? depends on border and order of pushes
+			 if (self->primitive.s.b.z > other->primitive.s.b.z + other->primitive.s.b.d * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.z += boxDistance.z;
+				 if (other->layer != C_WORLD)
+					 other->position.z -= boxDistance.z;
+				 return;
+			 }
+			 else if (other->primitive.s.b.z > self->primitive.s.b.z + self->primitive.s.b.d * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.z += boxDistance.z;
+				 if (other->layer != C_WORLD)
+					 other->position.z -= boxDistance.z;
+				 return;
+			 }
+			 else if (self->primitive.s.b.x > other->primitive.s.b.x + other->primitive.s.b.w * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.x += boxDistance.x;
+				 if (other->layer != C_WORLD)
+					 other->position.x -= boxDistance.x;
+				 return;
+			 }
+			 else if (other->primitive.s.b.x > self->primitive.s.b.x + self->primitive.s.b.w * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.x += boxDistance.x;
+				 if (other->layer != C_WORLD)
+					 other->position.x -= boxDistance.x;
+				 return;
+			 }
 
-		 //change else and if structuring later to fix snapping with y corners? depends on border and order of pushes
-		 if (self->primitive.s.b.z > other->primitive.s.b.z + other->primitive.s.b.d * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.z += boxDistance.z;
-			 if (other->layer != C_WORLD)
-				 other->position.z -= boxDistance.z;
+			 else if (self->primitive.s.b.y > other->primitive.s.b.y + other->primitive.s.b.h * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.y += boxDistance.y;
+				 if (other->layer != C_WORLD)
+					 other->position.y -= boxDistance.y;
+				 return;
+			 }
+			 else if (other->primitive.s.b.y > self->primitive.s.b.y + self->primitive.s.b.h * border) {
+				 if (self->layer != C_WORLD)
+					 self->position.y += boxDistance.y;
+				 if (other->layer != C_WORLD)
+					 other->position.y -= boxDistance.y;
+				 return;
+			 }
 		 }
-		else if (other->primitive.s.b.z > self->primitive.s.b.z + self->primitive.s.b.d * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.z += boxDistance.z;
-			 if (other->layer != C_WORLD)
-				other->position.z -= boxDistance.z;
-		 }
-		 else if (self->primitive.s.b.x > other->primitive.s.b.x + other->primitive.s.b.w * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.x += boxDistance.x;
-			 if (other->layer != C_WORLD)
-				 other->position.x -= boxDistance.x;
-		 }
-		 else if (other->primitive.s.b.x > self->primitive.s.b.x + self->primitive.s.b.w * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.x += boxDistance.x;
-			 if (other->layer != C_WORLD)
-				 other->position.x -= boxDistance.x;
-		 }
-
-		 else if (self->primitive.s.b.y > other->primitive.s.b.y + other->primitive.s.b.h * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.y += boxDistance.y;
-			 if (other->layer != C_WORLD)
-				 other->position.y -= boxDistance.y;
-		 }
-		 else if (other->primitive.s.b.y > self->primitive.s.b.y + self->primitive.s.b.h * border) {
-			 if (self->layer != C_WORLD)
-				 self->position.y += boxDistance.y;
-			 if (other->layer != C_WORLD)
-				 other->position.y -= boxDistance.y;
-		 } 
-	 } 
+	 }
 }
 
 void collider_update(Collider* self) {
 	GFC_Vector3D oldPos = self->position;
 	//update stuff
+	if (self->velocity.z > -1) self->velocity.z-= self->gravity;
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
 	self->primitive.s.b.x = self->position.x;
