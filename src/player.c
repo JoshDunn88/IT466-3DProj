@@ -63,7 +63,8 @@ void player_think(Entity* self)
     Player_Data* dat = (struct Player_Data*)(self->data);
     if (!dat) return;
     //slog("health: %i, consumed: %i", dat->health, dat->prey_eaten);
-
+    if (!self->collider) return;
+    check_world_bounds(self->collider);
 }
 void player_update(Entity* self)
 {
@@ -240,4 +241,12 @@ void cam_follow_player(Entity* self, float offset)
    // slog("position: %f,%f,%f", offsetPos.x, offsetPos.y, offsetPos.z);
     gf3d_camera_look_at(forward, &offsetPos);
     
+}
+
+void check_world_bounds(Collider* self) {
+    int cubic_bound = 8;
+    if (!self) return;
+    if (self->position.x > cubic_bound || self->position.x < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);
+    if (self->position.y > cubic_bound || self->position.y < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);
+    if (self->position.z > cubic_bound || self->position.z < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);
 }

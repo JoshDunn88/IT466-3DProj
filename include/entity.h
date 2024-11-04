@@ -48,6 +48,8 @@ void entity_clear_all(Entity* ignore);
 void check_collisions(Collider* self);
 
 
+
+
 /*
  * @brief think for all entities
  *  

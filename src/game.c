@@ -163,7 +163,7 @@ int main(int argc,char *argv[])
 
                 //always do ui draws after world draws, which are after backgroun draws (skybox)
                 entity_draw_all();
-                
+              
 
             /*    gf3d_model_draw(
                     dino,
