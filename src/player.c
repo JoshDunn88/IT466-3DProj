@@ -111,6 +111,11 @@ void player_update(Entity* self)
             {
                 player_move_up(self, moveSpeed);
             }
+
+            if (keys[SDL_SCANCODE_C])
+            {
+                player_move_up(self, -moveSpeed);
+            }
             /*
             * TODO: Rotate with mouse, strafe with a/d
             if (keys[SDL_SCANCODE_SPACE])

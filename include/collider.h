@@ -16,7 +16,7 @@ typedef enum
 
 typedef struct Collider_S
 {
-	//Entity*			ent; //entity that owns this collider, will break if try to use maybe restructure?
+	//Entit*			ent; //entity that owns this collider, will break if try to use maybe restructure?
 	//int*			sectorList; //for spacial division later
 	GFC_Primitive	primitive; //primitive struct including type
 	GFC_Vector3D	velocity; //how much to move per update
@@ -34,7 +34,7 @@ typedef struct Collider_S
 
 
 	//behavior
-	void (*onTriggerEnter) (struct Collider_S* self, struct Collider_S* other); //called when another collider enters the trigger
+	void (*onTriggerEnter) (struct Entity* self, struct Entity* other); //called when another collider enters the trigger
 	void (*onTriggerExit) (struct Collider_S* self, struct Collider_S* other); //called when another collider exits the trigger probably don't need this, might for hiding bushes though
 	void (*whileTrigger) (struct Collider_S* self, struct Collider_S* other); //called while in trigger after entry before exit
 }Collider;

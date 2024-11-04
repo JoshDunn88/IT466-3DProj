@@ -30,5 +30,6 @@ Entity* prey_new();
 void prey_think(Entity* self);
 void prey_update(Entity* self);
 void prey_free(Entity* self);
-
+void prey_eaten(Collider* self, Collider* other);
+void prey_chillin(Collider* self, Collider* other);
 #endif

@@ -4,6 +4,8 @@
 void prey_think(Entity* self);
 void prey_update(Entity* self);
 void prey_free(Entity* self);
+void prey_eaten(Collider* self, Collider* other);
+void prey_chillin(Collider* self, Collider* other);
 
 Entity* prey_new()
 {
@@ -26,6 +28,11 @@ Entity* prey_new()
 	//self->collider = sphere_collider_new(gfc_vector3d(0, 5, 0), 1);
 	self->position = self->collider->position;
 	self->collider->layer = C_PREY;
+	self->collider->isTrigger = 1;
+	self->collider->triggerActive = 0;
+	self->collider->onTriggerEnter = prey_eaten;
+	self->collider->onTriggerExit = prey_chillin;
+	self->collider->whileTrigger = prey_chillin;
 
 	//behavior
 	//self->think = prey_think;
@@ -45,4 +52,38 @@ void prey_update(Entity* self) {
 }
 void prey_free(Entity* self) {
 
+}
+
+void prey_eaten(Collider* self, Collider* other) {
+	
+	//slog("bout to bea eaten");
+	if (!self || !other) {
+		slog("one of us isn't real");
+		return;
+	}
+
+	Entity* selfEnt;
+	selfEnt = entity_get_by_collider(self);
+	if (!selfEnt) {
+		slog("failed to get entity");
+		return;
+	}
+
+	if (other->layer != C_PLAYER) {
+		slog("you cant eat me");
+		return;
+	}
+	
+	//this is probably bad
+	if (selfEnt->alive) {
+		slog("i've been eaten");
+		selfEnt->alive = 0;
+		return;
+	}
+	slog("why am i here");
+}
+
+//mandatory for trigger functionality
+void prey_chillin(Collider* self, Collider* other) {
+	//chillin
 }

@@ -36,11 +36,63 @@ void entity_system_init(Uint32 maxEnts)
 }
 
 
+void check_collisions(Collider* self) {
+	int i;
+	Uint8 collided = 0;
+	for (i = 0; i < _entity_manager.entityMax; i++) {
+		if (!_entity_manager.entityList[i]._inuse) continue;
+		if (!_entity_manager.entityList[i].alive) continue;
+		//skip same layer collisions
+		if (self->layer == _entity_manager.entityList[i].collider->layer) return;
+
+		collided = check_collision(self, _entity_manager.entityList[i].collider);
+		if (collided) slog("collided");
+
+		if (collided && !self->isTrigger) {
+			do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
+			continue;
+		}
+		//redo this horrendous shit later
+		if (!self->isTrigger) continue;
+
+			if (collided) {
+				if (!self->triggerActive) {
+					slog("about to trigger");
+					self->onTriggerEnter(self, _entity_manager.entityList[i].collider);
+					self->triggerActive = 1;
+					continue;
+				}
+				self->whileTrigger(self, _entity_manager.entityList[i].collider);
+			}
+			else {
+				//slog("no more trigger");
+				if (self->triggerActive) {
+					self->onTriggerExit(self, _entity_manager.entityList[i].collider);
+					self->triggerActive = 0;
+					continue;
+				}
+			}
+			
+		
+
+	}
+}
+
+Entity* entity_get_by_collider(Collider* self) {
+	if (!self) return NULL;
+	int i;
+	for (i = 0; i < _entity_manager.entityMax; i++) {
+		if (!_entity_manager.entityList[i]._inuse) continue;
+		if (_entity_manager.entityList[i].collider == self) return &_entity_manager.entityList[i];
+
+	}
+	return NULL;
+}
 
 void entity_clear_all(Entity* ignore) 
 {
 	int i;
-	for (int i = 0; i < _entity_manager.entityMax; i++) {
+	for (i = 0; i < _entity_manager.entityMax; i++) {
 		if (&_entity_manager.entityList[i] == ignore) continue;
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		//do specific free
@@ -54,51 +106,18 @@ void entity_think_all()
 	int i;
 	for (int i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
+		if (!_entity_manager.entityList[i].alive) continue;
 		entity_think(&_entity_manager.entityList[i]);
 	}
 }
 
-void check_collisions(Collider* self) {
-	int i;
-	Uint8 collided = 0;
-	for (int i = 0; i < _entity_manager.entityMax; i++) {
-		if (!_entity_manager.entityList[i]._inuse) continue;
-		//skip same layer collisions
-		if (self->layer == _entity_manager.entityList[i].collider->layer) return;
-
-		collided = check_collision(self, _entity_manager.entityList[i].collider);
-		if (collided) slog("collided");
-
-		if (collided && !self->isTrigger) {
-			do_collision(self, _entity_manager.entityList[i].collider); //do you need to do this in reverse also??
-			return;
-		}
-		//redo this horrendous shit later
-		if (self->isTrigger) {
-			if (collided){
-				if (!self->triggerActive) {
-					self->onTriggerEnter(self, _entity_manager.entityList[i].collider);
-					self->triggerActive = 1;
-					return;
-				}
-				self->whileTrigger(self, _entity_manager.entityList[i].collider);
-			}
-			else if(self->triggerActive){
-				self->onTriggerExit(self, _entity_manager.entityList[i].collider);
-				self->triggerActive = 0;
-				return;
-			}
-			return;
-		}
-		
-	}
-}
 
 void entity_update_all()
 {
 	int i;
 	for (int i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
+		if (!_entity_manager.entityList[i].alive) continue;
 		entity_update(&_entity_manager.entityList[i]);
 	}
 }
@@ -108,6 +127,7 @@ void entity_draw_all()
 	int i;
 	for (i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
+		if (!_entity_manager.entityList[i].alive) continue;
 		//do draw
 		entity_draw(&_entity_manager.entityList[i]);
 	}
@@ -124,6 +144,7 @@ Entity* entity_new()
 		_entity_manager.entityList[i]._inuse = 1;
 		_entity_manager.entityList[i].scale = gfc_vector3d(1, 1, 1);
 		_entity_manager.entityList[i].collider = NULL;
+		_entity_manager.entityList[i].alive = 1;
 		//_entity_manager.entityList[i].velocity = gfc_vector3d(0, 0, 0);
 		return &_entity_manager.entityList[i];
 	}

@@ -18,6 +18,7 @@ typedef struct Entity_S
 	GFC_Vector3D	scale;
 	GFC_TextLine	name;
 	Uint8			_inuse;	//flag for memory management
+	Uint8			alive;	//flag for life
 	
 	
 	 
@@ -54,6 +55,12 @@ void check_collisions(Collider* self);
 */
 void entity_think_all();
 
+/*
+ * @brief get entity by its collider
+ *
+
+*/
+Entity* entity_get_by_collider(Collider* self);
 /*
  * @brief update for all entities
  *
