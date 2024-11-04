@@ -130,12 +130,12 @@ void do_collision(Collider* self, Collider* other) {
 		 float xDist = SDL_fabsf(boxDistance.x);
 		 float yDist = SDL_fabsf(boxDistance.y);
 		 float zDist = SDL_fabsf(boxDistance.z);
-		 slog("dists: x %f, t %f, z %f", xDist, yDist, zDist);
+		 //slog("dists: x %f, t %f, z %f", xDist, yDist, zDist);
 		 float* max;
 		 max = &xDist;
 		 if (yDist > *max) max = &yDist;
 		 if (zDist > *max) max = &zDist;
-		 slog("max %f", &max);
+		 //slog("max %f", *max);
 		 gfc_vector3d_normalize(&boxDistance);
 		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
 		 
@@ -170,7 +170,7 @@ void do_collision(Collider* self, Collider* other) {
 void collider_update(Collider* self) {
 	GFC_Vector3D oldPos = self->position;
 	//update stuff
-	if (self->velocity.z > -1) self->velocity.z-= self->gravity;
+	if (self->velocity.z > -0.035) self->velocity.z-= self->gravity;
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
 	self->primitive.s.b.x = self->position.x;

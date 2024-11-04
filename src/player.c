@@ -8,8 +8,11 @@
 
 void player_think(Entity* self);
 void player_update(Entity* self);
-void player_free(Entity* self);
+void player_free(void* data);
 void player_walk_forward(Entity* self, float magnitude);
+
+//boooo global variable bad
+Uint8 g;
 
 Player_Data* player_data_new() {
     Player_Data* data = malloc(sizeof(Player_Data));
@@ -59,15 +62,14 @@ void player_think(Entity* self)
 	if (!self) return;
     Player_Data* dat = (struct Player_Data*)(self->data);
     if (!dat) return;
-    slog("health: %i, consumed: %i", dat->health, dat->prey_eaten);
+    //slog("health: %i, consumed: %i", dat->health, dat->prey_eaten);
 
 }
 void player_update(Entity* self)
 {
-    float moveSpeed = 0.05;
+    float moveSpeed = 0.03;
     GFC_Vector3D position, rotation;
     const Uint8* keys;
-
 	if (!self) return;
     /*
 	self->position = gfc_vector3d_added(self->position, gfc_vector3d(0, 0, 0.2));
@@ -75,12 +77,15 @@ void player_update(Entity* self)
 		self->position = gfc_vector3d(0, 0, 0);
    */
         
-
+        
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
+    
 
-        //dont walk with no input, gravity applies after so its fine
-        if (self->collider)
-            self->collider->velocity = gfc_vector3d(0, 0, 0);
+        //dont walk with no input, let gravity work
+        if (self->collider) {
+            self->collider->velocity = gfc_vector3d(0, 0, self->collider->velocity.z);
+            if (!self->collider->gravity) self->collider->velocity.z = 0;
+        }
 
             if (keys[SDL_SCANCODE_A])
             {
@@ -101,6 +106,19 @@ void player_update(Entity* self)
             {
                 player_walk_right(self, -moveSpeed);
             }
+
+            //keydown only
+            if (keys[SDL_SCANCODE_G])
+            {
+                
+                if (self && self->collider && !g) {
+                    if (!self->collider->gravity) self->collider->gravity = 0.001;
+                    else self->collider->gravity = 0;
+                    slog("gravity time");
+                    g = 1;
+                }
+            }
+            else if (g) { g = 0;}
 
             if (keys[SDL_SCANCODE_Q])
             {
@@ -145,6 +163,7 @@ void player_update(Entity* self)
                 slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
                 
             }
+          
             return;
         
        
@@ -175,7 +194,8 @@ void player_walk_forward(Entity* self, float magnitude)
     forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
     
-    self->collider->velocity = forward;
+    self->collider->velocity.x = forward.x;
+    self->collider->velocity.y = forward.y;
 
 }
 
@@ -193,7 +213,8 @@ void player_walk_right(Entity* self, float magnitude)
     right.y = -w.y;
     gfc_vector3d_set_magnitude(&right, magnitude);
 
-    self->collider->velocity = right;
+    self->collider->velocity.x = right.x;
+    self->collider->velocity.y = right.y;
 
 }
 void cam_follow_player(Entity* self, float offset) 

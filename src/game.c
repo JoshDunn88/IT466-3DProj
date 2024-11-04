@@ -64,10 +64,13 @@ int main(int argc,char *argv[])
     
     //local variables
     Entity* player;
-    Entity* prey;
+    Player_Data* dat;
+    Entity* prey, *prey2, * prey3, * prey4;
     Entity* ground;
     Model *sky,*dino;
     GFC_Matrix4 skyMat,dinoMat;
+    //GFC_String* health, *food;
+    char* healthVal, *foodVal, *speed;
     //initializtion    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -98,8 +101,22 @@ int main(int argc,char *argv[])
 
     
     player = player_new();
+    dat = (struct Player_Data*)(player->data);
     prey = prey_new();
+    prey2 = prey_new();
+    prey2->collider->isTrigger = 0;
+    prey2->collider->position.y = -2;
+    prey3 = prey_new();
+    prey4 = prey_new();
+    prey3->collider->position.y = 3;
+    prey4->collider->position.y = 7;
+
     ground = environment_new();
+    //health = gfc_string("Health: ");
+    //food = gfc_string("Food: ");
+    healthVal = "";
+    foodVal = "";
+    speed = "";
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(0,0,5));
@@ -122,6 +139,13 @@ int main(int argc,char *argv[])
         //ent stuff here after input before draws? 
         entity_think_all();
         entity_update_all();
+
+        //make function later
+        sprintf(&healthVal, "%i", dat->health);
+        sprintf(&foodVal, "%i", dat->prey_eaten);
+        sprintf(&speed, "%f", gfc_vector3d_magnitude(player->collider->velocity));
+        //gfc_string_append(health, healthVal);
+        //gfc_string_append(food, foodVal);
 
         //camera work should prob go last - Josh
         //camera updates
@@ -148,10 +172,17 @@ int main(int argc,char *argv[])
                     0);
                 */
 
+                
                 draw_origin();
             //2D draws
                 gf2d_mouse_draw();
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
+                //make ui function suite and file later probably         
+                    
+                //slog("about to do UI");
+                gf2d_font_draw_line_tag(&healthVal, FT_H1, GFC_COLOR_GREEN, gfc_vector2d(300, 10));
+                gf2d_font_draw_line_tag(&foodVal, FT_H1, GFC_COLOR_YELLOW, gfc_vector2d(600, 10));
+                gf2d_font_draw_line_tag(&speed, FT_H1, GFC_COLOR_BLUE, gfc_vector2d(900, 10));
         gf3d_vgraphics_render_end();
         if (gfc_input_command_down("exit"))_done = 1; // exit condition
         game_frame_delay();
