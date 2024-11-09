@@ -16,7 +16,7 @@ Collider* collider_setup(GFC_Primitive prim) {
 	//change this to account for other prim types later
 	if (prim.type == GPT_BOX) {
 		self->scale = gfc_vector3d(prim.s.b.w, prim.s.b.h, prim.s.b.d);
-		self->position = gfc_vector3d(prim.s.b.x, prim.s.b.y, prim.s.b.z);
+		self->position = gfc_vector3d(prim.s.b.x + prim.s.b.w/2, prim.s.b.y + prim.s.b.h/2, prim.s.b.z + prim.s.b.d/2);
 	}
 	else if (prim.type == GPT_SPHERE)
 		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
@@ -47,7 +47,7 @@ Collider* plane_collider_new(GFC_Vector3D position, float distance) {
 
 Collider* box_collider_new(GFC_Vector3D position, GFC_Vector3D dimensions) {
 	GFC_Primitive prim = { 0 };
-		prim.s.b = gfc_box(position.x, position.y, position.z, dimensions.x, dimensions.y, dimensions.z);
+		prim.s.b = gfc_box(position.x - dimensions.x/2, position.y - dimensions.y / 2, position.z - dimensions.z / 2, dimensions.x, dimensions.y, dimensions.z);
 		prim.type = GPT_BOX;
 	return collider_setup(prim);
 }
@@ -132,19 +132,21 @@ void do_collision(Collider* self, Collider* other) {
 		 float xDist = SDL_fabsf(boxDistance.x);
 		 float yDist = SDL_fabsf(boxDistance.y);
 		 float zDist = SDL_fabsf(boxDistance.z);
-		 //slog("dists: x %f, t %f, z %f", xDist, yDist, zDist);
+		 slog("dists: x %f, y %f, z %f", xDist, yDist, zDist);
 		 float* max;
 		 max = &xDist;
 		 if (yDist > *max) max = &yDist;
 		 if (zDist > *max) max = &zDist;
-		 //slog("max %f", *max);
+		 slog("max %f", *max);
 		 gfc_vector3d_normalize(&boxDistance);
 		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
 		 
 		 if (max == &xDist) {
 			 slog("do x");
-			 if (self->layer != C_WORLD)
+			 if (self->layer != C_WORLD) {
 				 self->position.x += boxDistance.x;
+			 }
+				 
 			 if (other->layer != C_WORLD)
 				 other->position.x -= boxDistance.x;
 			 return;
@@ -175,9 +177,9 @@ void collider_update(Collider* self) {
 	if (self->velocity.z > -0.035) self->velocity.z-= self->gravity;
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 	//move primitive
-	self->primitive.s.b.x = self->position.x;
-	self->primitive.s.b.y = self->position.y;
-	self->primitive.s.b.z = self->position.z;
+	self->primitive.s.b.x = self->position.x - self->primitive.s.b.w /2;
+	self->primitive.s.b.y = self->position.y - self->primitive.s.b.h /2;
+	self->primitive.s.b.z = self->position.z - self->primitive.s.b.d /2;
 	
 	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }

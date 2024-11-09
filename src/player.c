@@ -43,7 +43,7 @@ Entity* player_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
 	self->model = gf3d_model_load("models/dino.model"); 
-    self->collider = box_collider_new(self->position, gfc_vector3d(1, 1, 1));
+    self->collider = box_collider_new(self->position, gfc_vector3d(2.5, 2.5, 2.5));
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
@@ -253,7 +253,7 @@ void cam_follow_player(Entity* self, float offset)
 }
 
 void check_world_bounds(Collider* self) {
-    int cubic_bound = 8;
+    int cubic_bound = 12;
     if (!self) return;
     if (self->position.x > cubic_bound || self->position.x < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);
     if (self->position.y > cubic_bound || self->position.y < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);

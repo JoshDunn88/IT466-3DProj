@@ -189,7 +189,7 @@ void entity_update(Entity* self)
 		check_collisions(self->collider);
 		collider_update(self->collider);
 		//I have absoluetely no idea why this is necessary to multiply by, is there a bit shift happening somewhere I don't know about??
-		gfc_vector3d_scale(self->position, self->collider->position, 2);
+		gfc_vector3d_scale(self->position, self->collider->position, 1);
 		
 	}
 	//meupdate
@@ -230,7 +230,7 @@ void entity_draw(Entity *self)
 	if (self->collider->layer == C_PREDATOR) mineColor = gfc_color(0.9, 0.1, 0.1, 0.4);
 	if (self->collider->primitive.type == GPT_BOX) {
 		//if (self->collider->layer == C_PLAYER) slog("prim before: %f, %f, %f, %f, %f, %f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z, self->collider->primitive.s.b.w, self->collider->primitive.s.b.h, self->collider->primitive.s.b.d);
-		gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z), gfc_vector3d(0, 0, 0), self->collider->scale, mineColor);
+		gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.w/2, self->collider->primitive.s.b.h/2, self->collider->primitive.s.b.d/2), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), mineColor);
 		//if (self->collider->layer == C_PLAYER) slog("prim after: %f, %f, %f, %f, %f, %f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z, self->collider->primitive.s.b.w, self->collider->primitive.s.b.h, self->collider->primitive.s.b.d);
 	}
 	if (self->collider->primitive.type == GPT_SPHERE) gf3d_draw_sphere_solid(self->collider->primitive.s.s, self->collider->position, gfc_vector3d(0, 0, 0), gfc_vector3d(2, 2, 2), mineColor, gfc_color(0, 0, 0, 0));
