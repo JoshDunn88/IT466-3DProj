@@ -181,6 +181,7 @@ void player_update(Entity* self)
 void player_free(void* data)
 {
 	if (!data) return;
+    slog("freeing player data");
     free(data);
 }
 

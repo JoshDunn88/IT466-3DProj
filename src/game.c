@@ -192,7 +192,7 @@ int main(int argc,char *argv[])
     }    
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
-    entity_free(player); //likely unneccesary, but is extra clean, like washing below the knee
+    //entity_free(player); //what was I even doing here lol, this caused hang on exit
     slog("gf3d program end");
     exit(0); //calls all atexit() functions automatically
     slog_sync();

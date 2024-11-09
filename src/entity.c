@@ -98,7 +98,8 @@ void entity_clear_all(Entity* ignore)
 	int i;
 	for (i = 0; i < _entity_manager.entityMax; i++) {
 		if (&_entity_manager.entityList[i] == ignore) continue;
-		if (!_entity_manager.entityList[i]._inuse) continue;
+		//this was wrong?
+		//if (!_entity_manager.entityList[i]._inuse) continue;
 		//do specific free
 		entity_free(&_entity_manager.entityList[i]);
 		
@@ -161,9 +162,12 @@ void entity_free(Entity* self)
 {
 	if (!self) return;
 	gf3d_model_free(self->model);
+	slog("model freed");
 	if (self->collider) free(self->collider);
+	slog("collider freed");
 	//free anthing special that may have been allocated FOR this
 	if (self->free) self->free(self->data);
+	slog("data freed");
 }
 
 void entity_think (Entity* self)
