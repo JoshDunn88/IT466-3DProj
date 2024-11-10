@@ -138,14 +138,12 @@ void do_collision(Collider* self, Collider* other) {
 		 max = &xDist;
 		 if (yDist > *max) max = &yDist;
 		 if (zDist > *max) max = &zDist;
-		 slog("max %f", *max);
-		 //gfc_vector3d_normalize(&boxDistance);
-		 //gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
-		 // probably need to do position too
+		 //slog("max %f", *max);
+		 
 		 if (max == &xDist) {
-			 slog("do x");
+			 //slog("do x");
 			 if (self->layer != C_WORLD) {
-				 //self->velocity.x = -self->velocity.x;
+				
 				 if (boxDistance.x > 0)
 					self->position.x += (self->scale.x / 2 + other->scale.x / 2) - xDist + 0.001f;
 				 else
@@ -153,17 +151,20 @@ void do_collision(Collider* self, Collider* other) {
 				 self->velocity.x /= 2;
 			 }
 				 
-			 if (other->layer != C_WORLD) {
-				 //other->position.x += (self->scale.x / 2 + other->scale.x / 2) - boxDistance.x;
+			 else {
+				 if (boxDistance.x > 0)
+					 other->position.x -= (self->scale.x / 2 + other->scale.x / 2) - xDist + 0.001f;
+				 else
+					 other->position.x += (self->scale.x / 2 + other->scale.x / 2) - xDist + 0.001f;
 				 other->velocity.x = self->velocity.x;
 			 }
 				 
 			 return;
 		 }
 		 else if (max == &yDist) {
-			 slog("do y");
+			 //slog("do y");
 			 if (self->layer != C_WORLD) {
-				 //self->velocity.x = -self->velocity.x;
+				 
 					 if (boxDistance.y > 0)
 						 self->position.y += (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
 					 else
@@ -172,15 +173,20 @@ void do_collision(Collider* self, Collider* other) {
 				 self->velocity.y /= 2;
 			 }
 
-			 if (other->layer != C_WORLD) {
+			
+			 else {
+				 if (boxDistance.y > 0)
+					 other->position.y -= (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
+				 else
+					 other->position.y += (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
 				 other->velocity.y = self->velocity.y;
 			 }
 			 return;
 		 }
 		 else if (max == &zDist) {
-			 slog("do z");
+			 //slog("do z");
 			 if (self->layer != C_WORLD) {
-				 //self->velocity.x = -self->velocity.x;
+				 
 				 if (boxDistance.z > 0)
 					self->position.z += (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
 				 else
@@ -188,7 +194,12 @@ void do_collision(Collider* self, Collider* other) {
 				 self->velocity.z /= 2;
 			 }
 
-			 if (other->layer != C_WORLD) {
+			 //if me ground move you
+			 else {
+				 if (boxDistance.z > 0)
+					 other->position.z -= (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
+				 else
+					 other->position.z += (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
 				 other->velocity.z = self->velocity.z;
 			 }
 			 return;
