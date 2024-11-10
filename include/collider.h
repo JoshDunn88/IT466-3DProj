@@ -98,7 +98,7 @@ void set_as_trigger(Collider* self, Uint8 toBeTrigger);
  * @param other other collider
  * @return 1 if yes, 0 if no
 */
-Uint8 check_collision(Collider* self, Collider* other);
+Uint8 check_collision(Collider* self, Collider* other, GFC_Vector3D self_velocity, GFC_Vector3D other_velocity);
 
 /*
  * @brief do collision effect for this and other

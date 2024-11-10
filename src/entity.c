@@ -38,15 +38,25 @@ void entity_system_init(Uint32 maxEnts)
 
 void check_collisions(Collider* self) {
 	int i;
+	GFC_Vector3D self_sub_velocity;
+	GFC_Vector3D other_sub_velocity;
 	Uint8 collided = 0;
 	for (i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		if (!_entity_manager.entityList[i].alive) continue;
 		//skip same layer collisions
 		if (self->layer == _entity_manager.entityList[i].collider->layer) return;
-
-		collided = check_collision(self, _entity_manager.entityList[i].collider);
-		if (collided) slog("collided");
+		int it;
+		int iterations = 40;
+		for (it = 1; it <= iterations; it++) {
+			gfc_vector3d_scale(self_sub_velocity, self->velocity, (it / iterations));
+			gfc_vector3d_scale(other_sub_velocity, _entity_manager.entityList[i].collider->velocity, (it / iterations));
+			collided = check_collision(self, _entity_manager.entityList[i].collider, self_sub_velocity, other_sub_velocity);
+			if (!collided) continue;
+			slog("collided at substep %i", it);
+			break;
+		}
+		
 
 		if (collided && !self->isTrigger) {
 			//die

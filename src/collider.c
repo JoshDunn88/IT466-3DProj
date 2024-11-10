@@ -73,7 +73,7 @@ void collider_free(Collider* self) {
 }
 
 //TODO make this predictive with velocity not current position?
-Uint8 check_collision(Collider* self, Collider* other) {
+Uint8 check_collision(Collider* self, Collider* other, GFC_Vector3D self_vel, GFC_Vector3D other_vel) {
 	if (!self || !other) return 0;
 	if (self == other) {
 		//slog("no thats me");
@@ -82,7 +82,7 @@ Uint8 check_collision(Collider* self, Collider* other) {
 
 	if (self->primitive.type == GPT_BOX) { // && Layer!= LAYER
 		if (other->primitive.type == GPT_BOX) {
-			return predictive_box_overlap(self->primitive.s.b, other->primitive.s.b, self->velocity, other->velocity);
+			return predictive_box_overlap(self->primitive.s.b, other->primitive.s.b, self_vel, other_vel);
 		}
 		if (other->primitive.type == GPT_SPHERE)
 			return 0; //not implemented
@@ -105,6 +105,7 @@ void do_collision(Collider* self, Collider* other) {
 
 	 //special cases
 	
+	 //do we need to add iterative velocity instead?
 	 //THIS IS SPHERE 
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
 
@@ -140,31 +141,93 @@ void do_collision(Collider* self, Collider* other) {
 		 slog("max %f", *max);
 		 //gfc_vector3d_normalize(&boxDistance);
 		 //gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
-		 
+		 // probably need to do position too
 		 if (max == &xDist) {
 			 slog("do x");
 			 if (self->layer != C_WORLD) {
-				 self->velocity.x = -self->velocity.x;
+				 //self->velocity.x = -self->velocity.x;
+				 self->velocity.x /= 2;
+				 if (other->layer != C_WORLD) {
+					 if (boxDistance.x > 0) {
+						 self->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
+						 other->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
+					 }
+					 else {
+						 self->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
+						 other->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
+					 }
+					 other->velocity.x = self->velocity.x; //maybe not do
+				 }
+				 else {
+					 if (boxDistance.x > 0) {
+						 self->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist);
+
+					 }
+					 else {
+						 self->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist);
+
+					 }
+				 }
+
+
 			 }
-				 
-			 if (other->layer != C_WORLD)
-				 other->velocity.x = -other->velocity.x;
+			 /* do I really need to do both? its already doubled in the loop check
+			  if (other->layer != C_WORLD) {
+				  other->velocity.y = self->velocity.y;
+			  }
+			  */
 			 return;
 		 }
 		 else if (max == &yDist) {
 			 slog("do y");
-			 if (self->layer != C_WORLD)
-				 self->velocity.y = -self->velocity.y;
-			 if (other->layer != C_WORLD)
-				 other->velocity.y = -other->velocity.y;
+			 if (self->layer != C_WORLD) {
+				 //self->velocity.x = -self->velocity.x;
+				 self->velocity.y /= 2;
+				 if (other->layer != C_WORLD) {
+					 if (boxDistance.y > 0) {
+						 self->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
+						 other->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
+					 }
+					 else {
+						 self->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
+						 other->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
+					 }
+					 other->velocity.y = self->velocity.y; //maybe not do
+				 }
+				 else {
+					 if (boxDistance.y > 0) {
+						 self->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist);
+						 
+					 }
+					 else {
+						 self->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist);
+					
+					 }
+				 }
+					
+				 
+			 }
+			/* do I really need to do both? its already doubled in the loop check
+			 if (other->layer != C_WORLD) {
+				 other->velocity.y = self->velocity.y;
+			 }
+			 */
 			 return;
 		 }
 		 else if (max == &zDist) {
 			 slog("do z");
-			 if (self->layer != C_WORLD)
-				 self->velocity.z = -self->velocity.z;
-			 if (other->layer != C_WORLD)
-				 other->velocity.z = -other->velocity.z;
+			 if (self->layer != C_WORLD) {
+				 //self->velocity.x = -self->velocity.x;
+				 if (boxDistance.z > 0)
+					self->position.z -= (self->scale.z / 2 + other->scale.z / 2) - zDist;
+				 else
+					 self->position.z += (self->scale.z / 2 + other->scale.z / 2) - zDist;
+				 self->velocity.z /= 2;
+			 }
+
+			 if (other->layer != C_WORLD) {
+				 other->velocity.z = self->velocity.z;
+			 }
 			 return;
 		 }
 	 }
