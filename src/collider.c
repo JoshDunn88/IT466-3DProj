@@ -146,72 +146,35 @@ void do_collision(Collider* self, Collider* other) {
 			 slog("do x");
 			 if (self->layer != C_WORLD) {
 				 //self->velocity.x = -self->velocity.x;
+				 if (boxDistance.x > 0)
+					self->position.x += (self->scale.x / 2 + other->scale.x / 2) - xDist + 0.001f;
+				 else
+					 self->position.x -= (self->scale.x / 2 + other->scale.x / 2) - xDist + 0.001f;
 				 self->velocity.x /= 2;
-				 if (other->layer != C_WORLD) {
-					 if (boxDistance.x > 0) {
-						 self->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
-						 other->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
-					 }
-					 else {
-						 self->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
-						 other->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist) / 2;
-					 }
-					 other->velocity.x = self->velocity.x; //maybe not do
-				 }
-				 else {
-					 if (boxDistance.x > 0) {
-						 self->position.x -= ((self->scale.x / 2 + other->scale.x / 2) - xDist);
-
-					 }
-					 else {
-						 self->position.x += ((self->scale.x / 2 + other->scale.x / 2) - xDist);
-
-					 }
-				 }
-
-
 			 }
-			 /* do I really need to do both? its already doubled in the loop check
-			  if (other->layer != C_WORLD) {
-				  other->velocity.y = self->velocity.y;
-			  }
-			  */
+				 
+			 if (other->layer != C_WORLD) {
+				 //other->position.x += (self->scale.x / 2 + other->scale.x / 2) - boxDistance.x;
+				 other->velocity.x = self->velocity.x;
+			 }
+				 
 			 return;
 		 }
 		 else if (max == &yDist) {
 			 slog("do y");
 			 if (self->layer != C_WORLD) {
 				 //self->velocity.x = -self->velocity.x;
-				 self->velocity.y /= 2;
-				 if (other->layer != C_WORLD) {
-					 if (boxDistance.y > 0) {
-						 self->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
-						 other->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
-					 }
-					 else {
-						 self->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
-						 other->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist) + 0.001f;
-					 }
-					 other->velocity.y = self->velocity.y; //maybe not do
-				 }
-				 else {
-					 if (boxDistance.y > 0) {
-						 self->position.y -= ((self->scale.y / 2 + other->scale.y / 2) - yDist);
-						 
-					 }
-					 else {
-						 self->position.y += ((self->scale.y / 2 + other->scale.y / 2) - yDist);
-					
-					 }
-				 }
-					
+					 if (boxDistance.y > 0)
+						 self->position.y += (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
+					 else
+						 self->position.y -= (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
 				 
+				 self->velocity.y /= 2;
 			 }
-			/* do I really need to do both? its already doubled in the loop check
+
 			 if (other->layer != C_WORLD) {
 				 other->velocity.y = self->velocity.y;
 			 }
-			 */
 			 return;
 		 }
 		 else if (max == &zDist) {
@@ -219,9 +182,9 @@ void do_collision(Collider* self, Collider* other) {
 			 if (self->layer != C_WORLD) {
 				 //self->velocity.x = -self->velocity.x;
 				 if (boxDistance.z > 0)
-					self->position.z -= (self->scale.z / 2 + other->scale.z / 2) - zDist;
+					self->position.z += (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
 				 else
-					 self->position.z += (self->scale.z / 2 + other->scale.z / 2) - zDist;
+					 self->position.z -= (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
 				 self->velocity.z /= 2;
 			 }
 
@@ -248,8 +211,10 @@ Uint8 predictive_box_overlap(GFC_Box a, GFC_Box b, GFC_Vector3D a_d, GFC_Vector3
 void collider_update(Collider* self) {
 	GFC_Vector3D oldPos = self->position;
 	//update stuff
-	if (self->velocity.z > -0.035) self->velocity.z-= self->gravity;
 	gfc_vector3d_add(self->position, self->position, self->velocity);
+
+	if (self->velocity.z > -0.035) self->velocity.z-= self->gravity;
+	
 	//move primitive
 	self->primitive.s.b.x = self->position.x - self->primitive.s.b.w /2;
 	self->primitive.s.b.y = self->position.y - self->primitive.s.b.h /2;
