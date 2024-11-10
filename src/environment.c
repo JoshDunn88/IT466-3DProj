@@ -21,7 +21,8 @@ Entity* environment_new() {
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(1, 1, 1);
 	self->model = NULL; //entity's model if it has one
-	self->collider = box_collider_new(gfc_vector3d(1, -5, 0.1), gfc_vector3d(1, 1, 1));
+	
+	self->collider = box_collider_new(gfc_vector3d(0,0,-5), gfc_vector3d(8, 8, 1));
 	self->position = self->collider->position;
 	self->collider->layer = C_WORLD;
 	self->collider->isTrigger = 0;

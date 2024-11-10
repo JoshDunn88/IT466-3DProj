@@ -101,11 +101,10 @@ Uint8 check_collision(Collider* self, Collider* other, GFC_Vector3D self_vel, GF
 }
 void do_collision(Collider* self, Collider* other) {
 	 if (!self || !other) return;
-	 //should maybe do this in check instead
 
 	 //special cases
 	
-	 //do we need to add iterative velocity instead?
+	 //REDO THIS THIS IS OLD, use the actual distance like in box
 	 //THIS IS SPHERE 
 	 if (self->primitive.type == GPT_SPHERE && other->primitive.type == GPT_SPHERE) {
 
@@ -133,15 +132,18 @@ void do_collision(Collider* self, Collider* other) {
 		 float xDist = SDL_fabsf(boxDistance.x);
 		 float yDist = SDL_fabsf(boxDistance.y);
 		 float zDist = SDL_fabsf(boxDistance.z);
+		 float xDistRel = xDist / (self->scale.x / 2 + other->scale.x / 2);
+		 float yDistRel = yDist / (self->scale.y / 2 + other->scale.y / 2);
+		 float zDistRel = zDist / (self->scale.z / 2 + other->scale.z / 2);
 		 slog("dists: x %f, y %f, z %f", xDist, yDist, zDist);
 		 float* max;
-		 max = &xDist;
-		 if (yDist > *max) max = &yDist;
-		 if (zDist > *max) max = &zDist;
+		 max = &xDistRel;
+		 if (yDistRel > *max) max = &yDistRel;
+		 if (zDistRel > *max) max = &zDistRel;
 		 //slog("max %f", *max);
 		 
-		 if (max == &xDist) {
-			 //slog("do x");
+		 if (max == &xDistRel) {
+			 slog("do x");
 			 if (self->layer != C_WORLD) {
 				
 				 if (boxDistance.x > 0)
@@ -161,8 +163,8 @@ void do_collision(Collider* self, Collider* other) {
 				 
 			 return;
 		 }
-		 else if (max == &yDist) {
-			 //slog("do y");
+		 else if (max == &yDistRel) {
+			 slog("do y");
 			 if (self->layer != C_WORLD) {
 				 
 					 if (boxDistance.y > 0)
@@ -171,9 +173,7 @@ void do_collision(Collider* self, Collider* other) {
 						 self->position.y -= (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
 				 
 				 self->velocity.y /= 2;
-			 }
-
-			
+			 }	
 			 else {
 				 if (boxDistance.y > 0)
 					 other->position.y -= (self->scale.y / 2 + other->scale.y / 2) - yDist + 0.001f;
@@ -183,8 +183,8 @@ void do_collision(Collider* self, Collider* other) {
 			 }
 			 return;
 		 }
-		 else if (max == &zDist) {
-			 //slog("do z");
+		 else if (max == &zDistRel) {
+			 slog("do z");
 			 if (self->layer != C_WORLD) {
 				 
 				 if (boxDistance.z > 0)
@@ -193,7 +193,6 @@ void do_collision(Collider* self, Collider* other) {
 					 self->position.z -= (self->scale.z / 2 + other->scale.z / 2) - zDist + 0.001f;
 				 self->velocity.z /= 2;
 			 }
-
 			 //if me ground move you
 			 else {
 				 if (boxDistance.z > 0)

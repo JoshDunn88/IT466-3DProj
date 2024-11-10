@@ -41,9 +41,9 @@ Entity* player_new()
 	
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
-	self->scale = gfc_vector3d(0.5, 0.5, 0.5);
+	self->scale = gfc_vector3d(0.3, 0.3, 0.3);
 	self->model = gf3d_model_load("models/dino.model"); 
-    self->collider = box_collider_new(self->position, gfc_vector3d(2.5, 2.5, 2.5));
+    self->collider = box_collider_new(self->position, gfc_vector3d(2.8, 2.8, 2.8));
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
