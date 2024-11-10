@@ -114,8 +114,14 @@ void do_collision(Collider* self, Collider* other);
 */
 void collider_update(Collider* self);
 
-
-
+/*
+ * @brief check box overlap with offset parameters
+ * @param a box 1
+ * @param b box 2
+ * @param a_delta box 1 delta
+ * @param b_delta box 2 delta
+*/
+Uint8 predictive_box_overlap(GFC_Box a, GFC_Box b, GFC_Vector3D a_delta, GFC_Vector3D b_delta);
 
 
 //TODO Raycast

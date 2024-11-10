@@ -82,7 +82,7 @@ Uint8 check_collision(Collider* self, Collider* other) {
 
 	if (self->primitive.type == GPT_BOX) { // && Layer!= LAYER
 		if (other->primitive.type == GPT_BOX) {
-			return gfc_box_overlap(self->primitive.s.b, other->primitive.s.b);
+			return predictive_box_overlap(self->primitive.s.b, other->primitive.s.b, self->velocity, other->velocity);
 		}
 		if (other->primitive.type == GPT_SPHERE)
 			return 0; //not implemented
@@ -138,37 +138,48 @@ void do_collision(Collider* self, Collider* other) {
 		 if (yDist > *max) max = &yDist;
 		 if (zDist > *max) max = &zDist;
 		 slog("max %f", *max);
-		 gfc_vector3d_normalize(&boxDistance);
-		 gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
+		 //gfc_vector3d_normalize(&boxDistance);
+		 //gfc_vector3d_scale(boxDistance, boxDistance, 0.05);
 		 
 		 if (max == &xDist) {
 			 slog("do x");
 			 if (self->layer != C_WORLD) {
-				 self->position.x += boxDistance.x;
+				 self->velocity.x = -self->velocity.x;
 			 }
 				 
 			 if (other->layer != C_WORLD)
-				 other->position.x -= boxDistance.x;
+				 other->velocity.x = -other->velocity.x;
 			 return;
 		 }
 		 else if (max == &yDist) {
 			 slog("do y");
 			 if (self->layer != C_WORLD)
-				 self->position.y += boxDistance.y;
+				 self->velocity.y = -self->velocity.y;
 			 if (other->layer != C_WORLD)
-				 other->position.y -= boxDistance.y;
+				 other->velocity.y = -other->velocity.y;
 			 return;
 		 }
 		 else if (max == &zDist) {
 			 slog("do z");
 			 if (self->layer != C_WORLD)
-				 self->position.z += boxDistance.z;
+				 self->velocity.z = -self->velocity.z;
 			 if (other->layer != C_WORLD)
-				 other->position.z -= boxDistance.z;
+				 other->velocity.z = -other->velocity.z;
 			 return;
 		 }
 	 }
 	 
+}
+
+Uint8 predictive_box_overlap(GFC_Box a, GFC_Box b, GFC_Vector3D a_d, GFC_Vector3D b_d)
+{
+	if ((a.x + a_d.x > b.x + b_d.x + b.w) || (b.x + b_d.x > a.x + a_d.x + a.w) ||
+		(a.y + a_d.y > b.y + b_d.y + b.h) || (b.y + b_d.y > a.y + a_d.y + a.h) ||
+		(a.z + a_d.z > b.z + b_d.z + b.d) || (b.z + b_d.z > a.z + a_d.z + a.d))
+	{
+		return 0;
+	}
+	return 1;
 }
 
 void collider_update(Collider* self) {
