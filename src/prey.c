@@ -31,6 +31,7 @@ Entity* prey_new()
 	self->collider->layer = C_PREY;
 	self->collider->isTrigger = 1;
 	self->collider->triggerActive = 0;
+	self->collider->gravity = 0.002;
 	self->collider->onTriggerEnter = prey_eaten;
 	self->collider->onTriggerExit = prey_chillin;
 	self->collider->whileTrigger = prey_chillin;

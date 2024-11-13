@@ -15,6 +15,8 @@ void player_walk_forward(Entity* self, float magnitude);
 //boooo global variable bad
 Uint8 g;
 Uint8 SPACE;
+GFC_Vector2D temp;
+float maxSpeed = 0.13;
 
 Player_Data* player_data_new() {
     Player_Data* data = malloc(sizeof(Player_Data));
@@ -46,7 +48,7 @@ Entity* player_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.3, 0.3, 0.15);
 	self->model = gf3d_model_load("models/dino.model"); 
-    self->collider = box_collider_new(self->position, gfc_vector3d(2.8, 2.8, 2.8));
+    self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
     //self->collider = sphere_collider_new(self->position, 1);
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
@@ -71,8 +73,9 @@ void player_think(Entity* self)
 }
 void player_update(Entity* self)
 {
-
+    temp = gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y);
     float moveSpeed = 0.05;
+   
     GFC_Vector3D position, rotation;
     const Uint8* keys;
 	if (!self) return;
@@ -89,8 +92,8 @@ void player_update(Entity* self)
 
         //dont walk with no input, let gravity work
         if (self->collider) {
-            self->collider->velocity = gfc_vector3d(0, 0, self->collider->velocity.z);
-            if (!self->collider->gravity) self->collider->velocity.z = 0;
+           // self->collider->velocity = gfc_vector3d(0, 0, self->collider->velocity.z);
+            //if (!self->collider->gravity) self->collider->velocity.z = 0;
         }
 
             if (keys[SDL_SCANCODE_A])
@@ -113,12 +116,20 @@ void player_update(Entity* self)
                 player_walk_right(self, -moveSpeed);
             }
 
+            //do accumulated move + clamp
+            if (gfc_vector2d_magnitude_squared(temp) <= maxSpeed * maxSpeed || gfc_vector2d_magnitude_squared(temp) <= gfc_vector2d_magnitude_squared(gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y)))
+            {
+                self->collider->velocity.x = temp.x;
+                self->collider->velocity.y = temp.y;
+            }
+            
+            
             //keydown only
             if (keys[SDL_SCANCODE_G])
             {
                 
                 if (self && self->collider && !g) {
-                    if (!self->collider->gravity) self->collider->gravity = 0.001;
+                    if (!self->collider->gravity) self->collider->gravity = 0.002;
                     else self->collider->gravity = 0;
                     slog("gravity time");
                     g = 1;
@@ -221,14 +232,18 @@ void player_walk_forward(Entity* self, float magnitude)
     Player_Data* dat = (struct Player_Data*)(self->data);
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
+    
 
     w = gfc_vector2d_from_angle(dat->cam_target.z);
     forward.x = -w.x;
     forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
+    //if ((temp.x + forward.x) * (temp.x + forward.x) + (temp.y + forward.y) * (temp.y + forward.y) <= maxSpeed * maxSpeed) {
+        temp.x += forward.x;
+        temp.y += forward.y;
     
-    self->collider->velocity.x = forward.x;
-    self->collider->velocity.y = forward.y;
+    
+    
 
 }
 
@@ -248,8 +263,11 @@ void player_walk_right(Entity* self, float magnitude)
     right.y = -w.y;
     gfc_vector3d_set_magnitude(&right, magnitude);
 
-    self->collider->velocity.x = right.x;
-    self->collider->velocity.y = right.y;
+    //if ((temp.x + right.x) * (temp.x + right.x) + (temp.y + right.y) * (temp.y + right.y) <= maxSpeed * maxSpeed) {
+        temp.x += right.x;
+        temp.y += right.y;
+    
+    
 
 }
 void cam_follow_player(Entity* self, float offset) 

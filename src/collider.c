@@ -223,8 +223,10 @@ void collider_update(Collider* self) {
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 
-	if (self->velocity.z > -0.1) self->velocity.z-= self->gravity;
-	
+	if (self->velocity.z > -0.2) self->velocity.z-= self->gravity;
+	//friction
+	self->velocity.x *= 0.6f;
+	self->velocity.y *= 0.6f;
 	//move primitive
 	self->primitive.s.b.x = self->position.x - self->primitive.s.b.w /2;
 	self->primitive.s.b.y = self->position.y - self->primitive.s.b.h /2;
