@@ -135,7 +135,7 @@ void do_collision(Collider* self, Collider* other) {
 		 float xDistRel = xDist / (self->scale.x / 2 + other->scale.x / 2);
 		 float yDistRel = yDist / (self->scale.y / 2 + other->scale.y / 2);
 		 float zDistRel = zDist / (self->scale.z / 2 + other->scale.z / 2);
-		 slog("dists: x %f, y %f, z %f", xDist, yDist, zDist);
+		 //slog("dists: x %f, y %f, z %f", xDist, yDist, zDist);
 		 float* max;
 		 max = &xDistRel;
 		 if (yDistRel > *max) max = &yDistRel;
@@ -143,7 +143,7 @@ void do_collision(Collider* self, Collider* other) {
 		 //slog("max %f", *max);
 		 
 		 if (max == &xDistRel) {
-			 slog("do x");
+			 //slog("do x");
 			 if (self->layer != C_WORLD) {
 				
 				 if (boxDistance.x > 0)
@@ -164,7 +164,7 @@ void do_collision(Collider* self, Collider* other) {
 			 return;
 		 }
 		 else if (max == &yDistRel) {
-			 slog("do y");
+			 //slog("do y");
 			 if (self->layer != C_WORLD) {
 				 
 					 if (boxDistance.y > 0)
@@ -184,7 +184,7 @@ void do_collision(Collider* self, Collider* other) {
 			 return;
 		 }
 		 else if (max == &zDistRel) {
-			 slog("do z");
+			 //slog("do z");
 			 if (self->layer != C_WORLD) {
 				 
 				 if (boxDistance.z > 0)
@@ -223,7 +223,7 @@ void collider_update(Collider* self) {
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
 
-	if (self->velocity.z > -0.035) self->velocity.z-= self->gravity;
+	if (self->velocity.z > -0.1) self->velocity.z-= self->gravity;
 	
 	//move primitive
 	self->primitive.s.b.x = self->position.x - self->primitive.s.b.w /2;

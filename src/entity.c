@@ -53,7 +53,7 @@ void check_collisions(Collider* self) {
 			gfc_vector3d_scale(other_sub_velocity, _entity_manager.entityList[i].collider->velocity, (it / iterations));
 			collided = check_collision(self, _entity_manager.entityList[i].collider, self_sub_velocity, other_sub_velocity);
 			if (!collided) continue;
-			slog("collided at substep %i", it);
+			//else slog("collided at substep %i", it);
 			break;
 		}
 		

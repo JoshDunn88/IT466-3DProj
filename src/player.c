@@ -1,9 +1,10 @@
 #include "simple_logger.h"
 
 #include "gf3d_camera.h"
+#include "gf2d_mouse.h"
 
 #include "player.h"
-#include "gfc_primitives.h" //shouldn't need this
+//#include "gfc_primitives.h" //shouldn't need this
 
 
 void player_think(Entity* self);
@@ -23,6 +24,7 @@ Player_Data* player_data_new() {
     }
     data->health = 100;
     data->prey_eaten = 0;
+    data->cam_target = gfc_vector3d(0, 0, 0);
     return data;
 }
 
@@ -41,7 +43,7 @@ Entity* player_new()
 	
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
-	self->scale = gfc_vector3d(0.3, 0.3, 0.3);
+	self->scale = gfc_vector3d(0.3, 0.3, 0.15);
 	self->model = gf3d_model_load("models/dino.model"); 
     self->collider = box_collider_new(self->position, gfc_vector3d(2.8, 2.8, 2.8));
     //self->collider = sphere_collider_new(self->position, 1);
@@ -68,7 +70,8 @@ void player_think(Entity* self)
 }
 void player_update(Entity* self)
 {
-    float moveSpeed = 0.03;
+
+    float moveSpeed = 0.045;
     GFC_Vector3D position, rotation;
     const Uint8* keys;
 	if (!self) return;
@@ -172,7 +175,13 @@ void player_update(Entity* self)
                 Player_Data* dat = (struct Player_Data*)(self->data);
                 dat->health = 100;
             }
+
+            cam_orbit(self);
           
+            //can this go here?
+            cam_follow_player(self, -10);
+
+            //if (gf2d_mouse_get_movement)
             return;
         
        
@@ -192,14 +201,16 @@ void player_move_up(Entity* self, float magnitude)
 
 void player_walk_forward(Entity* self, float magnitude)
 {
+    if (!self || !self->data) return;
     if (!self->collider) {
         slog("player has no collider to move");
         return;
     }
+    Player_Data* dat = (struct Player_Data*)(self->data);
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
 
-    w = gfc_vector2d_from_angle(self->rotation.z);
+    w = gfc_vector2d_from_angle(dat->cam_target.z);
     forward.x = -w.x;
     forward.y = -w.y;
     gfc_vector3d_set_magnitude(&forward, magnitude);
@@ -211,14 +222,16 @@ void player_walk_forward(Entity* self, float magnitude)
 
 void player_walk_right(Entity* self, float magnitude)
 {
+    if (!self || !self->data) return;
     if (!self->collider) {
         slog("player has no collider to move");
         return;
     }
+    Player_Data* dat = (struct Player_Data*)(self->data);
     GFC_Vector2D w;
     GFC_Vector3D right = { 0 };
 
-    w = gfc_vector2d_from_angle(self->rotation.z + GFC_HALF_PI);
+    w = gfc_vector2d_from_angle(dat->cam_target.z + GFC_HALF_PI);
     right.x = -w.x;
     right.y = -w.y;
     gfc_vector3d_set_magnitude(&right, magnitude);
@@ -229,11 +242,14 @@ void player_walk_right(Entity* self, float magnitude)
 }
 void cam_follow_player(Entity* self, float offset) 
 {
+    if (!self || !self->data) return;
+
     GFC_Vector2D w;
     GFC_Vector3D forward = { 0 };
     GFC_Vector3D offsetPos = { 0 };
+    Player_Data* dat = (struct Player_Data*)(self->data);
 
-    w = gfc_vector2d_from_angle(self->rotation.z);
+    w = gfc_vector2d_from_angle(dat->cam_target.z);
     forward.x = w.x;
     forward.y = w.y;
     gfc_vector3d_normalize(&forward);
@@ -252,8 +268,19 @@ void cam_follow_player(Entity* self, float offset)
     
 }
 
+void cam_orbit(Entity* self) {
+    if (!self || !self->data) return;
+    Player_Data* dat = (struct Player_Data*)(self->data);
+    GFC_Vector2D mouse_delta = gf2d_mouse_get_movement();
+    mouse_delta.x = SDL_clamp(mouse_delta.x, -0.2f, 0.2f); //is this legal
+    //slog("moved: %i", gf2d_mouse_moved());
+    //slog("orbit: %f,%f", mouse_delta.x, mouse_delta.y);
+    dat->cam_target.z -= mouse_delta.x/10;
+   // gfc_vector3d_rotate_about_z(&dat->cam_target, mouse_delta.x);
+}
+
 void check_world_bounds(Collider* self) {
-    int cubic_bound = 12;
+    int cubic_bound = 30;
     if (!self) return;
     if (self->position.x > cubic_bound || self->position.x < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);
     if (self->position.y > cubic_bound || self->position.y < -cubic_bound) self->position = gfc_vector3d(0, 0, 0);

@@ -5,7 +5,8 @@
 
 typedef struct Player_Data_S
 {
-	int				health;
+	GFC_Vector3D	cam_target;
+	int				health;	
 	int				prey_eaten;
 
 }Player_Data;
@@ -29,6 +30,8 @@ Entity* player_new();
 * @param offset Distance to set camera back
 */
 void cam_follow_player(Entity* self, float offset);
+
+void cam_orbit();
 
 void player_walk_forward(Entity* self, float magnitude);
 void player_walk_right(Entity* self, float magnitude);
