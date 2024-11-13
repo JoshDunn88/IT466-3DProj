@@ -183,6 +183,11 @@ void player_update(Entity* self)
                 dat->health = 100;
             }
 
+            //rotate with movement
+            if (self->collider->velocity.x != 0 || self->collider->velocity.y != 0) {
+                self->rotation.z = gfc_vector2d_angle(gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y));
+                gfc_angle_clamp_radians(&self->rotation.z);
+            }
             cam_orbit(self);
           
             //can this go here?
