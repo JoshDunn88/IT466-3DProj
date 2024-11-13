@@ -709,5 +709,16 @@ GFC_Vector3D vgraphics_3d_position_to_screen_depth(GFC_Vector3D position)
 }
 
 
+GFC_Vector2D gf3d_vgraphics_get_SDL_window_size() {
+    int width, height;
+    
+    SDL_GetWindowSize(gf3d_vgraphics.main_window, &width, &height);
+    return gfc_vector2d(width, height);
+}
+
+SDL_Window* gf3d_vgraphics_get_SDL_Window() {
+    return gf3d_vgraphics.main_window;
+}
+
 /*eol@eof*/
 

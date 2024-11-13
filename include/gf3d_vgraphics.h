@@ -161,4 +161,12 @@ SDL_Surface *gf3d_vgraphics_create_surface(Uint32 w,Uint32 h);
  */
 SDL_Surface *gf3d_vgraphics_screen_convert(SDL_Surface **surface);
 
+/**
+ * @brief get window dims - Josh
+ * @return the dims
+ */
+GFC_Vector2D gf3d_vgraphics_get_SDL_window_size();
+
+SDL_Window* gf3d_vgraphics_get_SDL_Window();
+
 #endif

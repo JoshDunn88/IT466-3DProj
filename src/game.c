@@ -128,11 +128,33 @@ int main(int argc,char *argv[])
     
     gf3d_camera_enable_free_look(0);
     gf3d_camera_set_auto_pan(0);
+
+    //lock mouse to game
+    SDL_Window* sdl_win = gf3d_vgraphics_get_SDL_Window();
+    GFC_Vector2D dims;
+    dims = gf3d_vgraphics_get_SDL_window_size();
+    
+    //SDL_GetWindowMinimumSize
+    SDL_SetRelativeMouseMode(SDL_TRUE); //this just doesnt work
+    //SDL_CaptureMouse
+    //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_TRUE);
+        
     //windows
 
     // main game loop    
     while(!_done)
     {
+        //this is god awful, fix edge trtansition stutter by adding extra rotation to cam_target at loop point
+        GFC_Vector2D mouse_pos = gf2d_mouse_get_position();
+       // /*
+        if (mouse_pos.x >= dims.x-1) SDL_WarpMouseInWindow(sdl_win, 1, mouse_pos.y);
+        if (mouse_pos.x <= 0) SDL_WarpMouseInWindow(sdl_win, dims.x-2, mouse_pos.y);
+        if (mouse_pos.y >= dims.y-1) SDL_WarpMouseInWindow(sdl_win, mouse_pos.x, 1);
+        if (mouse_pos.y <= 0) SDL_WarpMouseInWindow(sdl_win, mouse_pos.x, dims.y-2);
+
+       // */
+       // slog("w: %f, h: %f, x: %f, y: %f", dims.x, dims.y, mouse_pos.x, mouse_pos.y);
+
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
@@ -178,7 +200,7 @@ int main(int argc,char *argv[])
                 
                 draw_origin();
             //2D draws
-                //gf2d_mouse_draw();
+                gf2d_mouse_draw();
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
                 //make ui function suite and file later probably         
                     
@@ -194,6 +216,8 @@ int main(int argc,char *argv[])
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
     slog("gf3d program end");
+    //SDL_SetRelativeMouseMode(SDL_FALSE); //probably dont need this but
+    //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_FALSE);
     exit(0); //calls all atexit() functions automatically
     slog_sync();
     return 0;

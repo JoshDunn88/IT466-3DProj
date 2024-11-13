@@ -279,10 +279,11 @@ void cam_orbit(Entity* self) {
     if (!self || !self->data) return;
     Player_Data* dat = (struct Player_Data*)(self->data);
     GFC_Vector2D mouse_delta = gf2d_mouse_get_movement();
-    mouse_delta.x = SDL_clamp(mouse_delta.x, -0.2f, 0.2f); //is this legal
+    
+    mouse_delta.x = SDL_clamp(mouse_delta.x, -2, 2); //is this legal
     //slog("moved: %i", gf2d_mouse_moved());
     //slog("orbit: %f,%f", mouse_delta.x, mouse_delta.y);
-    dat->cam_target.z -= mouse_delta.x/10;
+    dat->cam_target.z -= mouse_delta.x/20;
    // gfc_vector3d_rotate_about_z(&dat->cam_target, mouse_delta.x);
 }
 
