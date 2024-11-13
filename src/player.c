@@ -14,6 +14,7 @@ void player_walk_forward(Entity* self, float magnitude);
 
 //boooo global variable bad
 Uint8 g;
+Uint8 SPACE;
 
 Player_Data* player_data_new() {
     Player_Data* data = malloc(sizeof(Player_Data));
@@ -71,7 +72,7 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
 
-    float moveSpeed = 0.045;
+    float moveSpeed = 0.05;
     GFC_Vector3D position, rotation;
     const Uint8* keys;
 	if (!self) return;
@@ -145,10 +146,16 @@ void player_update(Entity* self)
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
+            //keydown jump
             if (keys[SDL_SCANCODE_SPACE])
             {
-                player_move_up(self, moveSpeed);
+                if (!SPACE) {
+                    player_move_up(self, moveSpeed);
+                    SPACE = 1;
+                }
+               
             }
+            else if (SPACE) { SPACE = 0; }
 
             if (keys[SDL_SCANCODE_C])
             {
