@@ -195,6 +195,9 @@
     <ClCompile Include="..\src\environment.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\physics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\gf2d_actor.h">
@@ -378,6 +381,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\environment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

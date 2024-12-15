@@ -25,11 +25,14 @@
 #include "gf3d_texture.h"
 #include "gf3d_draw.h"
 
+#include "gf3d_obj_load.h"
+
 #include "entity.h"
 #include "player.h"
 #include "prey.h"
 #include "environment.h"
 
+#include "physics.h"
 
 extern int __DEBUG;
 
@@ -140,6 +143,18 @@ int main(int argc,char *argv[])
     //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_TRUE);
         
     //windows
+
+    //some bs
+    int i, j;
+    slog("player has %d submeshes", player->model->mesh_list->count);
+    
+        Mesh* currmesh = (struct Mesh*)(player->model->mesh_list->elements[0].data);
+        MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
+        ObjData* currobj = currprim->objData;
+        Mesh_Collider* mc = mesh_collider_new(currobj);
+        slog("ermm %f", mc->triangles->a.x);
+    
+    //slog
 
     // main game loop    
     while(!_done)
