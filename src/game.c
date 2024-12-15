@@ -230,6 +230,7 @@ int main(int argc,char *argv[])
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
+    mesh_collider_free(mc);
     slog("gf3d program end");
     //SDL_SetRelativeMouseMode(SDL_FALSE); //probably dont need this but
     //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_FALSE);
