@@ -21,8 +21,8 @@ typedef struct Capsule_S
 
 typedef struct Mesh_Collider_S
 {
-	GFC_Triangle3D* triangles; //triangle prims
-	GFC_Vector3D* normals; //triangle normals
+	Face* triangle_verts; //triangle prims
+	Face* triangle_normals; //triangle normals
 	Uint32	tri_count;   //length of cylindrical portion of capsule
 
 
@@ -31,6 +31,7 @@ typedef struct Mesh_Collider_S
 
 
 Mesh_Collider* mesh_collider_new(ObjData* obj);
+Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj);
 void mesh_collider_free(Mesh_Collider* mc);
 
 #endif

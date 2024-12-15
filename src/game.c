@@ -151,8 +151,9 @@ int main(int argc,char *argv[])
         Mesh* currmesh = (struct Mesh*)(player->model->mesh_list->elements[0].data);
         MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
         ObjData* currobj = currprim->objData;
-        Mesh_Collider* mc = mesh_collider_new(currobj);
-        slog("ermm %f", mc->triangles->a.x);
+        //Mesh_Collider* mc = mesh_collider_new(currobj);
+        slog("vertex count %d", currobj->vertex_count);
+        slog("normal count %d", currobj->normal_count);
     
     //slog
 
@@ -230,7 +231,7 @@ int main(int argc,char *argv[])
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
-    mesh_collider_free(mc);
+    //mesh_collider_free(mc);
     slog("gf3d program end");
     //SDL_SetRelativeMouseMode(SDL_FALSE); //probably dont need this but
     //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_FALSE);
