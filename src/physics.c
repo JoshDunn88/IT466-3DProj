@@ -121,11 +121,25 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
    float len = gfc_vector3d_magnitude(intersection_vec); 
    GFC_Vector3D penetration_normal = gfc_vector3d_scaled(intersection_vec, 1 / len);  // normalize, probably quicker than the function?
    float penetration_depth = s.r - len; 
+   slog("colliding");
    return true; // intersection success
     
 }
 
+Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj) {
+    int i;
+    for (i = 0; i < obj->face_count; i++)
+    {
+        GFC_Vector3D p0, p1, p2;
+        p0 = obj->vertices[obj->faceVerts[i].verts[0]];
+        p1 = obj->vertices[obj->faceVerts[i].verts[1]];
+        p2 = obj->vertices[obj->faceVerts[i].verts[2]];
+        GFC_Triangle3D tri = gfc_triangle(p0, p1, p2);
+        //slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+        sphere_to_triangle_collision(sphere, tri);
+    }
 
+}
 void mesh_collider_free(Mesh_Collider* mc) {
     free(mc);
     

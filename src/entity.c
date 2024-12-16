@@ -197,7 +197,7 @@ void entity_update(Entity* self)
 
 	if (self->collider) {
 		//check_collisions(self->collider);
-		collider_update(self->collider);
+		//collider_update(self->collider);
 		//I have absoluetely no idea why this is necessary to multiply by, is there a bit shift happening somewhere I don't know about??
 		gfc_vector3d_scale(self->position, self->collider->position, 1);
 		

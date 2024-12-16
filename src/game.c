@@ -32,7 +32,6 @@
 #include "prey.h"
 #include "environment.h"
 
-#include "collider.h"
 #include "physics.h"
 
 extern int __DEBUG;
@@ -155,9 +154,10 @@ int main(int argc,char *argv[])
         //Mesh_Collider* mc = mesh_collider_new(currobj);
         slog("vertex count %d", currobj->vertex_count);
         slog("normal count %d", currobj->normal_count);
-    
-    //slog
+        sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
 
+    //slog
+    
     // main game loop    
     while(!_done)
     {
