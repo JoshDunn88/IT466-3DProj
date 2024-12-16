@@ -21,16 +21,20 @@ typedef struct Capsule_S
 
 typedef struct Mesh_Collider_S
 {
-	Face* triangle_verts; //triangle prims
-	Face* triangle_normals; //triangle normals
-	Uint32	tri_count;   //length of cylindrical portion of capsule
+	Face* triangle_verts; //indices of triangle verts
+	Face* triangle_normals; //indices of triangle normals
+	Uint32	tri_count;   //number of triangles
 
 
 }Mesh_Collider;
 
+GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar);
 
+//sphere v triangle, capsule and mesh stuff from https://wickedengine.net/2020/04/capsule-collision-detection/
 
 Mesh_Collider* mesh_collider_new(ObjData* obj);
+GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point);
+Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t);
 Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj);
 void mesh_collider_free(Mesh_Collider* mc);
 

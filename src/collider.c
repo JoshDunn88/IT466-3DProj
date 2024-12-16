@@ -18,8 +18,12 @@ Collider* collider_setup(GFC_Primitive prim) {
 		self->scale = gfc_vector3d(prim.s.b.w, prim.s.b.h, prim.s.b.d);
 		self->position = gfc_vector3d(prim.s.b.x + prim.s.b.w/2, prim.s.b.y + prim.s.b.h/2, prim.s.b.z + prim.s.b.d/2);
 	}
-	else if (prim.type == GPT_SPHERE)
+	else if (prim.type == GPT_SPHERE) {
 		self->position = gfc_vector3d(prim.s.s.x, prim.s.s.y, prim.s.s.z);
+		//change later is bad
+		self->scale = gfc_vector3d(prim.s.s.r, prim.s.s.r, prim.s.s.r);
+	}
+		
 	self->offset = gfc_vector3d(0, 0, 0);
 	self->gravity = 0;
 
@@ -227,10 +231,17 @@ void collider_update(Collider* self) {
 	//friction
 	self->velocity.x *= 0.6f;
 	self->velocity.y *= 0.6f;
-	//move primitive
-	self->primitive.s.b.x = self->position.x - self->primitive.s.b.w /2;
-	self->primitive.s.b.y = self->position.y - self->primitive.s.b.h /2;
-	self->primitive.s.b.z = self->position.z - self->primitive.s.b.d /2;
+	//move primitive this is for boxes
+	if (self->primitive.type = GPT_BOX) {
+		self->primitive.s.b.x = self->position.x - self->primitive.s.b.w / 2;
+		self->primitive.s.b.y = self->position.y - self->primitive.s.b.h / 2;
+		self->primitive.s.b.z = self->position.z - self->primitive.s.b.d / 2;
+	}
+	if (self->primitive.type = GPT_SPHERE) {
+		self->primitive.s.s.x = self->position.x;
+		self->primitive.s.s.y = self->position.y;
+		self->primitive.s.s.z = self->position.z;
+	}
 	
 	//gfc_primitive_offset(self->primitive, gfc_vector3d_subbed(self->position, oldPos));
 }

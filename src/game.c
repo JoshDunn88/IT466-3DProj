@@ -32,6 +32,7 @@
 #include "prey.h"
 #include "environment.h"
 
+#include "collider.h"
 #include "physics.h"
 
 extern int __DEBUG;
@@ -178,6 +179,7 @@ int main(int argc,char *argv[])
 
         //ent stuff here after input before draws? 
         entity_think_all();
+        //check mesh here
         entity_update_all();
 
         //make function later
