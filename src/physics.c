@@ -37,7 +37,7 @@ GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
     GFC_Vector3D ab = gfc_vector3d_subbed(b,a);
     float t = gfc_vector3d_dot_product(gfc_vector3d_subbed(point, a), ab) / gfc_vector3d_dot_product(ab, ab);
     float saturate = min(max(t, 0), 1);
-    return gfc_vector3d_added(b, gfc_vector3d_scaled(ab, saturate)); 
+    return gfc_vector3d_added(a, gfc_vector3d_scaled(ab, saturate)); 
 }
 
 //maybe pass by pointer
@@ -57,10 +57,6 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
     //intersection with triangle plane test
     if (distance < -s.r || distance > s.r)
         return false;// no intersection
-    else {
-        slog("colliding");
-        return true;
-    }
         
 
     projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
@@ -96,7 +92,8 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
     //intersects is final check on if we are colliding
     if (!inside && !intersects)
         return false;
-
+    slog("colliding");
+    return true; // intersection success
     
     GFC_Vector3D best_point = projected_point;
     GFC_Vector3D intersection_vec;
