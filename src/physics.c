@@ -72,19 +72,19 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
     GFC_Vector3D point1 = ClosestPointOnLineSegment(t.a, t.b, center);
     GFC_Vector3D v1 = gfc_vector3d_subbed(center, point1);
     float distsq1 = gfc_vector3d_dot_product(v1, v1);
-    Uint8 intersects = distsq1 < rsq;
+    Uint8 intersects = (distsq1 < rsq);
 
     // Edge 2:
     GFC_Vector3D point2 = ClosestPointOnLineSegment(t.b, t.c, center);
     GFC_Vector3D v2 = gfc_vector3d_subbed(center, point2);
     float distsq2 = gfc_vector3d_dot_product(v2, v2);
-    intersects |= distsq2 < rsq;
+    intersects = intersects || distsq2 < rsq;
 
     // Edge 3:
     GFC_Vector3D point3 = ClosestPointOnLineSegment(t.c, t.a, center);
     GFC_Vector3D v3 = gfc_vector3d_subbed(center, point3);
     float distsq3 = gfc_vector3d_dot_product(v3, v3);
-    intersects |= distsq3 < rsq;
+    intersects = intersects || distsq3 < rsq;
 
     //intersects is final check on if we are colliding
     if (!inside && !intersects)
