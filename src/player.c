@@ -16,7 +16,7 @@ void player_walk_forward(Entity* self, float magnitude);
 Uint8 g;
 Uint8 SPACE;
 GFC_Vector2D temp;
-float maxSpeed = 0.13;
+float maxSpeed = 0.06;
 
 Player_Data* player_data_new() {
     Player_Data* data = malloc(sizeof(Player_Data));
@@ -74,7 +74,7 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
     temp = gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y);
-    float moveSpeed = 0.05;
+    float moveSpeed = 0.02;
    
     GFC_Vector3D position, rotation;
     const Uint8* keys;
@@ -202,7 +202,7 @@ void player_update(Entity* self)
 
             //rotate with movement
             if (self->collider->velocity.x != 0 || self->collider->velocity.y != 0) {
-                self->rotation.z = gfc_vector2d_angle(gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y));
+                //self->rotation.z = gfc_vector2d_angle(gfc_vector2d(self->collider->velocity.x, self->collider->velocity.y));
                 gfc_angle_clamp_radians(&self->rotation.z);
             }
             cam_orbit(self);
