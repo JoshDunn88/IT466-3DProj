@@ -8,6 +8,15 @@ GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar) {
     return scaled;
 }
 
+Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b) {
+    if (a.x != b.x)
+        return 0;
+    if (a.y != b.y)
+        return 0;
+    if (a.z != b.z)
+        return 0;
+    return 1;
+}
 Mesh_Collider* mesh_collider_new(ObjData* obj) {
         int j;   
         Mesh_Collider* mc = malloc(sizeof(Mesh_Collider));
@@ -45,7 +54,7 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
 
     //intersection with triangle plane test
     if (distance < -s.r || distance > s.r)
-        return 0;// no intersection
+        return false;// no intersection
 
     projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
     
@@ -136,7 +145,8 @@ Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj) {
         p2 = obj->vertices[obj->faceVerts[i].verts[2]];
         GFC_Triangle3D tri = gfc_triangle(p0, p1, p2);
         //slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-        sphere_to_triangle_collision(sphere, tri);
+        //curently stops on first colliding triangle
+        return sphere_to_triangle_collision(sphere, tri);
     }
 
 }

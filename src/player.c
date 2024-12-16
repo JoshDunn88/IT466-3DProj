@@ -49,7 +49,7 @@ Entity* player_new()
 	self->scale = gfc_vector3d(0.3, 0.3, 0.15);
 	self->model = gf3d_model_load("models/dino.model"); 
     //self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
-    self->collider = sphere_collider_new(self->position, 1);
+    self->collider = sphere_collider_new(self->position, 2.5);
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
 	//behavior
@@ -183,8 +183,10 @@ void player_update(Entity* self)
             if (keys[SDL_SCANCODE_U]) {
                 slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
                 slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
-                slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
-                
+                if (self->collider->primitive.type == GPT_BOX)
+                    slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
+                if (self->collider->primitive.type == GPT_SPHERE)
+                    slog("prim pos: %f,%f,%f", self->collider->primitive.s.s.x, self->collider->primitive.s.s.y, self->collider->primitive.s.s.z);
             }
 
             if (keys[SDL_SCANCODE_R]) {

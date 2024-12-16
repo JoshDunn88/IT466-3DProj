@@ -41,34 +41,10 @@ Collider* sphere_collider_new( GFC_Vector3D position, float radius ) {
 	return collider_setup(prim);
 }
 
-
-Collider* plane_collider_new(GFC_Vector3D position, float distance) {
-	GFC_Primitive prim = { 0 };
-		prim.s.pl = gfc_plane3d(position.x, position.y, position.z, distance);
-		prim.type = GPT_PLANE;
-	return collider_setup(prim);
-}
-
 Collider* box_collider_new(GFC_Vector3D position, GFC_Vector3D dimensions) {
 	GFC_Primitive prim = { 0 };
 		prim.s.b = gfc_box(position.x - dimensions.x/2, position.y - dimensions.y / 2, position.z - dimensions.z / 2, dimensions.x, dimensions.y, dimensions.z);
 		prim.type = GPT_BOX;
-	return collider_setup(prim);
-}
-
-
-Collider* edge_collider_new(GFC_Vector3D position, GFC_Vector3D position2) {
-	GFC_Primitive prim = { 0 };
-		prim.s.e = gfc_edge3d(position.x, position.y, position.z, position2.x, position2.y, position2.z);
-		prim.type = GPT_EDGE;
-	return collider_setup(prim);
-}
-
-
-Collider* triangle_collider_new(GFC_Vector3D vertex1, GFC_Vector3D vertex2, GFC_Vector3D vertex3) {
-	GFC_Primitive prim = { 0 };
-		prim.s.t = gfc_triangle(vertex1, vertex2, vertex3);
-		prim.type = GPT_TRIANGLE;
 	return collider_setup(prim);
 }
 
@@ -117,14 +93,16 @@ void do_collision(Collider* self, Collider* other) {
 		 gfc_vector3d_sub(distance, self->position, other->position);
 		 gfc_vector3d_normalize(&distance);
 		 //edit scale for collision force/elasticity
-		 gfc_vector3d_scale(scaledDistance, distance, 0.035);
+		 //gfc_vector3d_scale(scaledDistance, distance, 0.035);
 		 
 
 		 //use layers to determine if any body is fixed
 		 if (self->layer != C_WORLD)
-			 gfc_vector3d_add(self->position, self->position, scaledDistance);
+			 gfc_vector3d_add(self->position, self->position, self->primitive.s.s.r + other->primitive.s.s.r - distance);
 		 if (other->layer != C_WORLD)
-			 gfc_vector3d_add(other->position, other->position, -scaledDistance);
+			 gfc_vector3d_add(other->position, other->position, self->primitive.s.s.r + other->primitive.s.s.r - distance);
+
+		 return;
 	 }
 
 	 //THIS IS BOX 
@@ -232,12 +210,12 @@ void collider_update(Collider* self) {
 	self->velocity.x *= 0.6f;
 	self->velocity.y *= 0.6f;
 	//move primitive this is for boxes
-	if (self->primitive.type = GPT_BOX) {
+	if (self->primitive.type == GPT_BOX) {
 		self->primitive.s.b.x = self->position.x - self->primitive.s.b.w / 2;
 		self->primitive.s.b.y = self->position.y - self->primitive.s.b.h / 2;
 		self->primitive.s.b.z = self->position.z - self->primitive.s.b.d / 2;
 	}
-	if (self->primitive.type = GPT_SPHERE) {
+	else if (self->primitive.type == GPT_SPHERE) {
 		self->primitive.s.s.x = self->position.x;
 		self->primitive.s.s.y = self->position.y;
 		self->primitive.s.s.z = self->position.z;

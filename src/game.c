@@ -32,7 +32,7 @@
 #include "prey.h"
 #include "environment.h"
 
-#include "physics.h"
+//#include "physics.h" included in entity now
 
 extern int __DEBUG;
 
@@ -68,7 +68,7 @@ int main(int argc,char *argv[])
     //local variables
     Entity* player;
     Player_Data* dat;
-    Entity* prey, *prey2, * prey3, * prey4;
+    //Entity* prey, *prey2, * prey3, * prey4;
     Entity* ground;
     Model *sky,*dino;
     GFC_Matrix4 skyMat,dinoMat;
@@ -105,7 +105,7 @@ int main(int argc,char *argv[])
     
     player = player_new();
     dat = (struct Player_Data*)(player->data);
-    prey = prey_new();
+    /*prey = prey_new();
     prey2 = prey_new();
     prey2->collider->isTrigger = 0;
     prey2->collider->position.y = -2;
@@ -115,8 +115,16 @@ int main(int argc,char *argv[])
     prey4->collider->position.y = 7;
     prey4->collider->layer = C_PREDATOR;
     prey4->collider->isTrigger = 0;
-
+    */
     ground = environment_new();
+    
+        Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
+        MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
+        ObjData* currobj = currprim->objData;
+
+        //gf3d_model_move(ground->model, ground->position, ground->rotation);
+    
+
     //health = gfc_string("Health: ");
     //food = gfc_string("Food: ");
     healthVal = "";
@@ -146,15 +154,15 @@ int main(int argc,char *argv[])
 
     //some bs
     int i, j;
-    slog("player has %d submeshes", player->model->mesh_list->count);
+    //slog("player has %d submeshes", player->model->mesh_list->count);
     
-        Mesh* currmesh = (struct Mesh*)(player->model->mesh_list->elements[0].data);
-        MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
-        ObjData* currobj = currprim->objData;
+        //Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
+       // MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
+       // ObjData* currobj = currprim->objData;
         //Mesh_Collider* mc = mesh_collider_new(currobj);
-        slog("vertex count %d", currobj->vertex_count);
-        slog("normal count %d", currobj->normal_count);
-        sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
+        //slog("vertex count %d", currobj->vertex_count);
+        //slog("normal count %d", currobj->normal_count);
+        //sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
 
     //slog
     
@@ -180,6 +188,7 @@ int main(int argc,char *argv[])
         //ent stuff here after input before draws? 
         entity_think_all();
         //check mesh here
+        sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
         entity_update_all();
 
         //make function later

@@ -29,6 +29,7 @@ typedef struct Mesh_Collider_S
 }Mesh_Collider;
 
 GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar);
+Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b);
 
 //sphere v triangle, capsule and mesh stuff from https://wickedengine.net/2020/04/capsule-collision-detection/
 
