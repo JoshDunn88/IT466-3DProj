@@ -143,14 +143,15 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D*
 }
 
 void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth) {
-
-    /*
-    float velocity_length = gfc_vector3d_magnitude(col->velocity);
-    GFC_Vector3D velocity_normalized = gfc_vector3d_scaled(col->velocity, 1 / velocity_length);
-    GFC_Vector3D undesired_motion = gfc_vector3d_scaled(normal, gfc_vector3d_dot_product(velocity_normalized, normal));
-    GFC_Vector3D desired_motion = gfc_vector3d_subbed(velocity_normalized, undesired_motion);
-    col->velocity = gfc_vector3d_scaled(desired_motion, velocity_length);
-    */
+    if (!col) return;
+    
+        float velocity_length = gfc_vector3d_magnitude(col->velocity);
+    if (velocity_length != 0) {
+        GFC_Vector3D velocity_normalized = gfc_vector3d_scaled(col->velocity, 1 / velocity_length);
+        GFC_Vector3D undesired_motion = gfc_vector3d_scaled(normal, gfc_vector3d_dot_product(velocity_normalized, normal));
+        GFC_Vector3D desired_motion = gfc_vector3d_subbed(velocity_normalized, undesired_motion);
+        col->velocity = gfc_vector3d_scaled(desired_motion, velocity_length);
+    }
     // Remove penetration (penetration epsilon added to handle infinitely small penetration):
     col->position = gfc_vector3d_added(col->position, gfc_vector3d_scaled(normal, (depth + 0.0001)));
 
@@ -159,6 +160,7 @@ void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D
 Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
     if (!col || !obj) return false;
     int i;
+    Uint8 collided = false;
     GFC_Vector3D pen_norm = gfc_vector3d(0,0,0);
     float pen_depth = 0;
     GFC_Sphere sphere = col->primitive.s.s;
@@ -174,10 +176,10 @@ Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
         if (sphere_to_triangle_collision(sphere, tri, &pen_norm, &pen_depth)) {
             sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth);
             slog("norm: %f, %f, %f  depth: %f", pen_norm.x, pen_norm.y, pen_norm.z, pen_depth);
-            return true;
+            collided = true;
         }
     }
-    return false;
+    return collided;
 }
 
 

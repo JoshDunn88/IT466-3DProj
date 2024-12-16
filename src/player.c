@@ -168,7 +168,8 @@ void player_update(Entity* self)
             }
             else {
                 if (SPACE) { SPACE = 0; }
-                player_move_up(self, 0);
+                if (!self->collider->gravity)
+                    player_move_up(self, 0);
             }
 
             if (keys[SDL_SCANCODE_C])
