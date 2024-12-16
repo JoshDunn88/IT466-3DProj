@@ -7,6 +7,8 @@
 #include "gf3d_mesh.h"
 #include "gf3d_obj_load.h"
 
+#include "collider.h"
+
 //collision layers
 
 typedef struct Capsule_S
@@ -35,8 +37,9 @@ Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b);
 
 Mesh_Collider* mesh_collider_new(ObjData* obj);
 GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point);
-Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t);
-Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj);
+Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth);
+Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj);
+void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth);
 void mesh_collider_free(Mesh_Collider* mc);
 
 #endif

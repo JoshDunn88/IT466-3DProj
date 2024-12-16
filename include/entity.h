@@ -6,9 +6,7 @@
 #include "gfc_vector.h"
 #include "gf3d_model.h"
 #include "gf3d_draw.h"
-
-#include "collider.h"
-
+//collider included in physics now
 #include "physics.h"
 
 typedef struct Entity_S

@@ -2,6 +2,7 @@
 #include "gfc_matrix.h"
 #include "physics.h"
 
+
 GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar) {
     GFC_Vector3D scaled;
     gfc_vector3d_set(scaled, v.x * scalar, v.y * scalar, v.z * scalar);
@@ -41,23 +42,27 @@ GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
 }
 
 //maybe pass by pointer
-Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
+Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth) {
     GFC_Vector3D t_n, center, projected_point, c0, c1, c2;
     float distance;
-
+    //slog("triangle: %f %f %f, %f %f %f, %f %f %f", t.a.x, t.a.y, t.a.z, t.b.x, t.b.y, t.b.z, t.c.x, t.c.y, t.c.z);
     center = gfc_vector3d(s.x, s.y, s.z);
-    //slog("center: %f %f %f,", center.x, center.y, center.z);
+    //slog("center: %f %f %f", center.x, center.y, center.z);
     
     t_n = gfc_trigfc_angle_get_normal(t);
     //slog("normal: %f %f %f,", t_n.x, t_n.y, t_n.z);
     distance = gfc_vector3d_dot_product(gfc_vector3d_subbed(center, t.a), t_n);
 
     //something about double sided don't think I need?
-   // slog("distance: %f, radius: %f", distance, s.r);
+    //slog("distance: %f, radius: %f", distance, s.r);
     //intersection with triangle plane test
     if (distance < -s.r || distance > s.r)
         return false;// no intersection
-        
+    else
+    {
+        //slog("collided");
+        //return true;
+    }
 
     projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
     
@@ -92,8 +97,6 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
     //intersects is final check on if we are colliding
     if (!inside && !intersects)
         return false;
-    slog("colliding");
-    return true; // intersection success
     
     GFC_Vector3D best_point = projected_point;
     GFC_Vector3D intersection_vec;
@@ -132,15 +135,33 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
    //seemed wrong type on tutorial, should be float?
    
    float len = gfc_vector3d_magnitude(intersection_vec); 
-   GFC_Vector3D penetration_normal = gfc_vector3d_scaled(intersection_vec, 1 / len);  // normalize, probably quicker than the function?
-   float penetration_depth = s.r - len; 
+   *pen_norm = gfc_vector3d_scaled(intersection_vec, 1 / len);  // normalize, probably quicker than the function?
+   *pen_depth = s.r - len;
    slog("colliding");
    return true; // intersection success
     
 }
 
-Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj) {
+void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth) {
+
+    /*
+    float velocity_length = gfc_vector3d_magnitude(col->velocity);
+    GFC_Vector3D velocity_normalized = gfc_vector3d_scaled(col->velocity, 1 / velocity_length);
+    GFC_Vector3D undesired_motion = gfc_vector3d_scaled(normal, gfc_vector3d_dot_product(velocity_normalized, normal));
+    GFC_Vector3D desired_motion = gfc_vector3d_subbed(velocity_normalized, undesired_motion);
+    col->velocity = gfc_vector3d_scaled(desired_motion, velocity_length);
+    */
+    // Remove penetration (penetration epsilon added to handle infinitely small penetration):
+    col->position = gfc_vector3d_added(col->position, gfc_vector3d_scaled(normal, (depth + 0.0001)));
+
+}
+
+Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
+    if (!col || !obj) return false;
     int i;
+    GFC_Vector3D pen_norm = gfc_vector3d(0,0,0);
+    float pen_depth = 0;
+    GFC_Sphere sphere = col->primitive.s.s;
     for (i = 0; i < obj->face_count; i++)
     {
         GFC_Vector3D p0, p1, p2;
@@ -150,10 +171,16 @@ Uint8 sphere_to_mesh_collision(GFC_Sphere sphere, ObjData* obj) {
         GFC_Triangle3D tri = gfc_triangle(p0, p1, p2);
         //slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
         //curently stops on first colliding triangle
-        return sphere_to_triangle_collision(sphere, tri);
+        if (sphere_to_triangle_collision(sphere, tri, &pen_norm, &pen_depth)) {
+            sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth);
+            slog("norm: %f, %f, %f  depth: %f", pen_norm.x, pen_norm.y, pen_norm.z, pen_depth);
+            return true;
+        }
     }
-
+    return false;
 }
+
+
 void mesh_collider_free(Mesh_Collider* mc) {
     free(mc);
     

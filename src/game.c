@@ -102,7 +102,7 @@ int main(int argc,char *argv[])
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
 
-    
+    ground = environment_new();
     player = player_new();
     dat = (struct Player_Data*)(player->data);
     /*prey = prey_new();
@@ -116,8 +116,9 @@ int main(int argc,char *argv[])
     prey4->collider->layer = C_PREDATOR;
     prey4->collider->isTrigger = 0;
     */
-    ground = environment_new();
-    
+    //ground = environment_new();
+    //ground->position = gfc_vector3d(0, 0, -5);
+    //gf3d_model_move(ground->model, ground->position, gfc_vector3d(0, 0, 0));
         Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
         MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
         ObjData* currobj = currprim->objData;
@@ -160,10 +161,20 @@ int main(int argc,char *argv[])
        // MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
        // ObjData* currobj = currprim->objData;
         //Mesh_Collider* mc = mesh_collider_new(currobj);
-        //slog("vertex count %d", currobj->vertex_count);
-        //slog("normal count %d", currobj->normal_count);
+        slog("vertex count %d", currobj->vertex_count);
+        slog("normal count %d", currobj->normal_count);
         //sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
-
+        /*
+        for (i = 0; i < currobj->face_count; i++)
+        {
+            GFC_Vector3D p0, p1, p2;
+            p0 = currobj->vertices[currobj->faceVerts[i].verts[0]];
+            p1 = currobj->vertices[currobj->faceVerts[i].verts[1]];
+            p2 = currobj->vertices[currobj->faceVerts[i].verts[2]];
+            GFC_Triangle3D tri = gfc_triangle(p0, p1, p2);
+            slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+        }
+        */
     //slog
     
     // main game loop    
@@ -188,7 +199,8 @@ int main(int argc,char *argv[])
         //ent stuff here after input before draws? 
         entity_think_all();
         //check mesh here
-        sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
+        if (player->collider)
+            sphere_to_mesh_collision(player->collider, currobj);
         entity_update_all();
 
         //make function later
