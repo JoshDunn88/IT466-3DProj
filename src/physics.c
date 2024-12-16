@@ -46,15 +46,22 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t) {
     float distance;
 
     center = gfc_vector3d(s.x, s.y, s.z);
+    //slog("center: %f %f %f,", center.x, center.y, center.z);
+    
     t_n = gfc_trigfc_angle_get_normal(t);
-
+    //slog("normal: %f %f %f,", t_n.x, t_n.y, t_n.z);
     distance = gfc_vector3d_dot_product(gfc_vector3d_subbed(center, t.a), t_n);
 
     //something about double sided don't think I need?
-
+   // slog("distance: %f, radius: %f", distance, s.r);
     //intersection with triangle plane test
     if (distance < -s.r || distance > s.r)
         return false;// no intersection
+    else {
+        slog("colliding");
+        return true;
+    }
+        
 
     projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
     

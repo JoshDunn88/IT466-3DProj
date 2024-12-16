@@ -23,7 +23,7 @@ typedef struct Collider_S
 	GFC_Vector3D	velocity; //how much to move per update
 	GFC_Vector3D	position; //center position 
 	
-	GFC_Vector3D	scale;
+	GFC_Vector3D	scale; // hmmm
 	GFC_Vector3D	offset; //offset from parent position
 	float			gravity;
 
