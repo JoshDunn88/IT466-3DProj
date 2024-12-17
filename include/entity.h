@@ -11,7 +11,14 @@
 
 typedef struct Entity_S
 {
-	
+	//behavior
+	void (*think) (struct Entity_S* self); //called every frame for entity to decide things
+	void (*update) (struct Entity_S* self); //called every frame to update its state
+	int (*draw) (struct Entity_S* self); //custom drawing code, if -1 skip
+	void (*free) (void* medata); //called when entity is cleaned up to clean custom data
+	void* data;                            //entity custom data beyond basics
+
+	//data
 	Model*			model; // entity's model if it has one
 	Collider*		collider;
 	Capsule*		capsule; //entity's capsule (maybe only for player)
@@ -25,12 +32,7 @@ typedef struct Entity_S
 	
 	 
 
-	//behavior
-	void (*think) (struct Entity_S* self); //called every frame for entity to decide things
-	void (*update) (struct Entity_S* self); //called every frame to update its state
-	int (*draw) (struct Entity_S* self); //custom drawing code, if -1 skip
-	void (*free) (void* medata); //called when entity is cleaned up to clean custom data
-	void* data;                            //entity custom data beyond basics
+	
 }Entity;
 
 /*

@@ -9,11 +9,46 @@ GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar) {
     return scaled;
 }
 
+void gfc_vector3d_angle_vectors3(GFC_Vector3D angles, GFC_Vector3D* forward, GFC_Vector3D* right, GFC_Vector3D* up)
+{
+    float angle;
+    float sr, sp, sy, cr, cp, cy;
+
+    angle = angles.z;
+    sy = sinf(angle);
+    cy = cosf(angle);
+    angle = angles.x;
+    sp = sinf(angle);
+    cp = cosf(angle);
+    angle = angles.y;
+    sr = sinf(angle);
+    cr = cosf(angle);
+
+    if (forward)
+    {
+        forward->x = (-1 * sr * sp * cy + -1 * cr * -sy);
+        forward->y = (-1 * sr * sp * sy + -1 * cr * cy);
+        forward->z = -1 * sr * cp;
+    }
+    if (right)
+    {
+        right->x = -1 * cp * cy;
+        right->y = -1 * cp * sy;
+        right->z = sp;
+    }
+    if (up)
+    {
+        up->x =  (cr * sp * cy + -sr * -sy);
+        up->y = -1 * (cr * sp * sy + -sr * cy);
+        up->z = cr * cp;
+    }
+}
+
 GFC_Edge3D get_capsule_endpoints(Capsule* self) {
     GFC_Vector3D invector, forward, up, right;
     GFC_Vector3D pos1, pos2, halflength;
     gfc_vector3d_set(invector, self->rotation.x, self->rotation.y, self->rotation.z);
-    gfc_vector3d_angle_vectors2(invector, &right, &forward, &up);
+    gfc_vector3d_angle_vectors3(invector, &forward, &right, &up);
 
     //angle
     if (gfc_vector3d_equal(self->rotation, gfc_vector3d(0, 0, 0)))

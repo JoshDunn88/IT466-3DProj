@@ -31,7 +31,7 @@ Entity* player_new();
 */
 void cam_follow_player(Entity* self, float offset);
 
-void cam_orbit();
+void cam_orbit(Entity* self);
 
 void player_walk_forward(Entity* self, float magnitude);
 void player_walk_right(Entity* self, float magnitude);

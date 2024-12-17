@@ -17,6 +17,11 @@ typedef enum
 
 typedef struct Collider_S
 {
+	//behavior
+	void (*onTriggerEnter) (struct Entity* self, struct Entity* other); //called when another collider enters the trigger
+	void (*onTriggerExit) (struct Collider_S* self, struct Collider_S* other); //called when another collider exits the trigger probably don't need this, might for hiding bushes though
+	void (*whileTrigger) (struct Collider_S* self, struct Collider_S* other); //called while in trigger after entry before exit
+	//data
 	//Entit*			ent; //entity that owns this collider, will break if try to use maybe restructure?
 	//int*			sectorList; //for spacial division later
 	GFC_Primitive	primitive; //primitive struct including type
@@ -34,10 +39,7 @@ typedef struct Collider_S
 
 
 
-	//behavior
-	void (*onTriggerEnter) (struct Entity* self, struct Entity* other); //called when another collider enters the trigger
-	void (*onTriggerExit) (struct Collider_S* self, struct Collider_S* other); //called when another collider exits the trigger probably don't need this, might for hiding bushes though
-	void (*whileTrigger) (struct Collider_S* self, struct Collider_S* other); //called while in trigger after entry before exit
+	
 }Collider;
 
 Collider* collider_setup(GFC_Primitive prim);
@@ -51,10 +53,9 @@ Collider* collider_setup(GFC_Primitive prim);
 */
 Collider* sphere_collider_new( GFC_Vector3D position, float radius);
 
-Collider* plane_collider_new(GFC_Vector3D position, float distance);
 
 /*
- * @brief create new collider for boxes and edges
+ * @brief create new collider for boxes 
  * @param type type of primitive to set
  * @param position origin of primitive
  * @param position2 2nd position or dimensions
@@ -62,17 +63,6 @@ Collider* plane_collider_new(GFC_Vector3D position, float distance);
 */
 Collider* box_collider_new( GFC_Vector3D position, GFC_Vector3D dimensions);
 
-Collider* edge_collider_new(GFC_Vector3D position, GFC_Vector3D position2);
-
-/*
- * @brief create new collider for triangles
- * @param type type of primitive to set
- * @param vertex1 
- * @param vertex2 
- * @param vertex3 
- * @return self this collider
-*/
-Collider* triangle_collider_new( GFC_Vector3D vertex1, GFC_Vector3D vertex2, GFC_Vector3D vertex3);
 /*
  * @brief free collider
  * @param self this collider

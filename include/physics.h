@@ -23,7 +23,7 @@ typedef struct Capsule_S
 
 GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar);
 Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b);
-
+void gfc_vector3d_angle_vectors3(GFC_Vector3D angles, GFC_Vector3D* forward, GFC_Vector3D* right, GFC_Vector3D* up);
 
 
 Capsule* capsule_new(GFC_Vector3D position, GFC_Vector3D rotation, float length, float radius);
