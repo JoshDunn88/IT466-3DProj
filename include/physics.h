@@ -29,6 +29,7 @@ GFC_Vector3D vector3d_forward(GFC_Vector3D rotation);
 GFC_Vector3D vector3d_right(GFC_Vector3D rotation);
 GFC_Vector3D vector3d_up(GFC_Vector3D rotation);
 
+void gfc_vector3d_local_angle_vectors(GFC_Vector3D angles, GFC_Vector3D* forward, GFC_Vector3D* right, GFC_Vector3D* up);
 
 Capsule* capsule_new(GFC_Vector3D position, GFC_Vector3D rotation, float length, float radius);
 

@@ -53,7 +53,7 @@ Entity* player_new()
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
 
-    self->capsule = capsule_new(self->position, gfc_vector3d(0, 0, 1), 1.5, capsule_radius);
+    self->capsule = capsule_new(self->position, gfc_vector3d(0, 1, 0), 2, capsule_radius);
 	//behavior
 	self->think = player_think;
 	self->update = player_update; 
@@ -144,7 +144,8 @@ void player_update(Entity* self)
                 // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z += 0.02;
-                gfc_angle_clamp_radians(&self->rotation.z);
+                //self->capsule->rotation.z += 0.02;
+                //gfc_angle_clamp_radians(&self->rotation.z);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
@@ -154,7 +155,7 @@ void player_update(Entity* self)
                 // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z -= 0.02;
-                gfc_angle_clamp_radians(&self->rotation.z);
+                //gfc_angle_clamp_radians(&self->rotation.z);
                // slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
@@ -164,7 +165,7 @@ void player_update(Entity* self)
                 // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.y += 0.02;
-                gfc_angle_clamp_radians(&self->rotation.y);
+                //gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
@@ -174,7 +175,26 @@ void player_update(Entity* self)
                 // self->rotation = gf3d_camera_get_angles();
                // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.y -= 0.02;
-                gfc_angle_clamp_radians(&self->rotation.y);
+                //gfc_angle_clamp_radians(&self->rotation.y);
+                //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+            }
+            if (keys[SDL_SCANCODE_T])
+            {
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.x += 0.02;
+                //gfc_angle_clamp_radians(&self->rotation.y);
+                //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+            }
+
+            if (keys[SDL_SCANCODE_Y])
+            {
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.x -= 0.02;
+                //gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
@@ -209,7 +229,7 @@ void player_update(Entity* self)
             */
             if (keys[SDL_SCANCODE_U]) {
                 slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
-                slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
+                //slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
                 if (self->collider->primitive.type == GPT_BOX)
                     slog("prim pos: %f,%f,%f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z);
                 if (self->collider->primitive.type == GPT_SPHERE)
@@ -245,10 +265,12 @@ void player_draw(Entity* self) {
     if (!self)
         return;
     GFC_Matrix4 matrix;
+    GFC_Vector3D corrected;
+    gfc_vector3d_set(corrected, self->rotation.y, self->rotation.x, self->rotation.z);
     gfc_matrix4_from_vectors(
        matrix,
        self->position,
-       self->rotation,
+       corrected,
        self->scale
    );
 
@@ -265,10 +287,17 @@ void player_draw(Entity* self) {
     GFC_Vector3D pos1, pos2, halflength;
     GFC_Color col, amb;
     GFC_Sphere s1, s2;
+
+    GFC_Vector3D invector, forward, up, right, angs;
+    gfc_vector3d_set(invector, self->rotation.y, self->rotation.x, self->rotation.z);
+    //gfc_vector3d_angles(self->rotation, &angs);
+    //gfc_vector3d_set(invector, angs.z, angs.y, angs.x);
+    gfc_vector3d_angle_vectors2(invector, &right, &forward, &up);
+    //angle
     if (gfc_vector3d_equal(self->capsule->rotation, gfc_vector3d(0, 0, 0)))
-        halflength = gfc_vector3d_scaled(gfc_vector3d(0, 0, 1), self->capsule->length / 2);
+        halflength = gfc_vector3d_scaled(gfc_vector3d(0, 1, 0), self->capsule->length / 2);
     else
-        halflength = gfc_vector3d_scaled(self->capsule->rotation, self->capsule->length / 2);
+        halflength = gfc_vector3d_scaled(forward, self->capsule->length / 2);
 
     pos1 =gfc_vector3d_added(self->capsule->position, halflength);
     pos2 = gfc_vector3d_subbed(self->capsule->position, halflength);

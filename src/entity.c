@@ -210,6 +210,7 @@ void entity_update(Entity* self)
 		//capsule_update(self->capsule);
 		//set entity pos to collider pos
 		gfc_vector3d_scale(self->capsule->position, self->position, 1);
+		gfc_vector3d_scale(self->capsule->rotation, self->rotation, 1);
 	}
 	//meupdate
 	if (self->update) self->update(self);

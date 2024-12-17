@@ -9,6 +9,36 @@ GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar) {
     return scaled;
 }
 
+void gfc_vector3d_local_angle_vectors(GFC_Vector3D angles, GFC_Vector3D* forward, GFC_Vector3D* right, GFC_Vector3D* up)
+{
+    if (forward)
+    {
+        forward->x = 0;
+        forward->y = 1;
+        forward->z = 0;
+        gfc_vector3d_rotate_about_x(forward, angles.x);
+        gfc_vector3d_rotate_about_z(forward, angles.z);
+        gfc_vector3d_rotate_about_y(forward, angles.y);
+    }
+    if (right)
+    {
+        right->x = 1;
+        right->y = 0;
+        right->z = 0;
+        gfc_vector3d_rotate_about_y(right, angles.y);
+        gfc_vector3d_rotate_about_z(right, angles.z);
+        gfc_vector3d_rotate_about_x(right, angles.x);
+    }
+    if (up)
+    {
+        up->x = 0;
+        up->y = 0;
+        up->z = 1;
+        gfc_vector3d_rotate_about_y(up, angles.y);
+        gfc_vector3d_rotate_about_x(up, angles.x);
+        gfc_vector3d_rotate_about_z(up, angles.z);
+    }
+}
 //switched up and forward may need to undo later if dependent on model rotation separate from entity??? idek
 GFC_Vector3D vector3d_forward(GFC_Vector3D rotation) {
     GFC_Vector3D forward; 
