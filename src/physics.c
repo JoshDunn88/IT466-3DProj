@@ -9,6 +9,51 @@ GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar) {
     return scaled;
 }
 
+//switched up and forward may need to undo later if dependent on model rotation separate from entity??? idek
+GFC_Vector3D vector3d_forward(GFC_Vector3D rotation) {
+    GFC_Vector3D forward; 
+    //x pitch y roll z yaw
+    forward.x = cos(rotation.x) * sin(rotation.z);
+    forward.z = -sin(rotation.x);
+    forward.y = cos(rotation.x) * cos(rotation.z);
+    gfc_angle_clamp_radians(&forward.x);
+    gfc_angle_clamp_radians(&forward.y);
+    gfc_angle_clamp_radians(&forward.z);
+    return forward;
+}
+GFC_Vector3D vector3d_right(GFC_Vector3D rotation) {
+    GFC_Vector3D  right;
+    
+    right.x = cos(rotation.z);
+    right.z = 0;
+    right.y = -sin(rotation.z);
+    
+    
+    
+    return right;
+}
+GFC_Vector3D vector3d_up(GFC_Vector3D rotation) {
+    GFC_Vector3D mat_rotation, up, world_up, out;
+    GFC_Matrix4 mat;
+    world_up = gfc_vector3d(0, 0, 1);
+   /*up.x = sin(rotation.x) * sin(rotation.z);
+   // up.z = cos(rotation.x);
+   // up.y = sin(rotation.x) * cos(rotation.z);
+
+    gfc_matrix4_from_vectors(mat, gfc_vector3d(0, 0, 0), rotation, gfc_vector3d(1, 1, 1));
+    gfc_matrix4_to_vectors(mat, NULL, &mat_rotation, NULL);
+    slog("matrix rotation: %f,%f,%f", mat_rotation.x, mat_rotation.y, mat_rotation.z);
+    up.x = -sinf(mat_rotation.x) * sinf(mat_rotation.z);
+    up.z = cosf(mat_rotation.x);
+    up.y = -sinf(mat_rotation.x) * cosf(mat_rotation.z);
+    */
+    slog("rotation: %f,%f,%f", rotation.x, rotation.y, rotation.z);
+    up = gfc_vector3d_multiply(rotation, world_up);
+    //gfc_vector3d_angle_vectors(up, &out.x)
+
+    return up;
+}
+
 Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b) {
     if (a.x != b.x)
         return 0;

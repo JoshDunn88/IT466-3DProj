@@ -98,4 +98,6 @@ void entity_think(Entity* self);
 
 void entity_update(Entity* self);
 
+
+
 #endif

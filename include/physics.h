@@ -24,6 +24,12 @@ typedef struct Capsule_S
 GFC_Vector3D gfc_vector3d_scaled(GFC_Vector3D v, float scalar);
 Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b);
 
+// local dirs from https://gamedev.stackexchange.com/questions/190054/how-to-calculate-the-forward-up-right-vectors-using-the-rotation-angles
+GFC_Vector3D vector3d_forward(GFC_Vector3D rotation);
+GFC_Vector3D vector3d_right(GFC_Vector3D rotation);
+GFC_Vector3D vector3d_up(GFC_Vector3D rotation);
+
+
 Capsule* capsule_new(GFC_Vector3D position, GFC_Vector3D rotation, float length, float radius);
 
 //sphere v triangle, capsule stuff from https://wickedengine.net/2020/04/capsule-collision-detection/

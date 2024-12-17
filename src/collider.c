@@ -209,6 +209,8 @@ void collider_update(Collider* self) {
 	//friction
 	self->velocity.x *= 0.6f;
 	self->velocity.y *= 0.6f;
+	if (self->gravity == 0)
+		self->velocity.z *= 0.6f;
 	//move primitive this is for boxes
 	if (self->primitive.type == GPT_BOX) {
 		self->primitive.s.b.x = self->position.x - self->primitive.s.b.w / 2;

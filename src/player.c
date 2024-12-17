@@ -46,8 +46,8 @@ Entity* player_new()
     float capsule_radius = 1;
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
-	self->scale = gfc_vector3d(0.3, 0.3, 0.15);
-	self->model = gf3d_model_load("models/dino.model"); 
+	self->scale = gfc_vector3d(2, 2, 2);
+	self->model = gf3d_model_load("models/player.model"); 
     //self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
     self->collider = sphere_collider_new(self->position, capsule_radius);
     self->collider->layer = C_PLAYER;
@@ -159,19 +159,40 @@ void player_update(Entity* self)
                 //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
+            if (keys[SDL_SCANCODE_Z])
+            {
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.y += 0.02;
+                gfc_angle_clamp_radians(&self->rotation.y);
+                //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+            }
+
+            if (keys[SDL_SCANCODE_X])
+            {
+                // self->rotation = gf3d_camera_get_angles();
+               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
+                self->rotation.y -= 0.02;
+                gfc_angle_clamp_radians(&self->rotation.y);
+                //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
+            }
+
             //keydown jump
             if (keys[SDL_SCANCODE_SPACE])
             {
                 if (!SPACE) {
-                    player_move_up(self, moveSpeed);
+                    player_move_up(self, 0.1);
                     SPACE = 1;
                 }
                
             }
             else {
                 if (SPACE) { SPACE = 0; }
-                if (!self->collider->gravity)
-                    player_move_up(self, 0);
+           
+                
+             
             }
 
             if (keys[SDL_SCANCODE_C])
@@ -273,7 +294,29 @@ void player_free(void* data)
 
 void player_move_up(Entity* self, float magnitude)
 {
-    self->collider->velocity.z= magnitude;
+    //should do this for ground jumps otherwise terrain  go boing
+    //self->collider->velocity.z= magnitude;
+
+    if (!self || !self->data) return;
+    if (!self->collider) {
+        slog("player has no collider to move");
+        return;
+    }
+    GFC_Vector3D jump = { 0 };
+    slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
+    jump = vector3d_up(self->rotation);
+    
+
+    GFC_Vector3D forward, up, right, angs;
+    gfc_vector3d_angles(self->rotation, &angs);
+        gfc_vector3d_angle_vectors(angs, &forward, &right, &up );
+    //if (!gfc_vector3d_equal(up, gfc_vector3d(0, 0, 0)))
+       //gfc_vector3d_normalize(&up);
+    slog("jump: %f,%f,%f", up.x, up.y, up.z);
+    jump = gfc_vector3d_scaled(up, magnitude);
+    //if ((temp.x + forward.x) * (temp.x + forward.x) + (temp.y + forward.y) * (temp.y + forward.y) <= maxSpeed * maxSpeed) {
+    //gfc_vector3d_add(self->collider->velocity, self->collider->velocity, jump);
+    self->collider->velocity= jump;
 }
 
 void player_walk_forward(Entity* self, float magnitude)
