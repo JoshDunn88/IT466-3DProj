@@ -43,20 +43,22 @@ Entity* player_new()
 
 	
 	//self->name = "playerr";
-	
+    float capsule_radius = 1;
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.3, 0.3, 0.15);
 	self->model = gf3d_model_load("models/dino.model"); 
     //self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
-    self->collider = sphere_collider_new(self->position, 1);
+    self->collider = sphere_collider_new(self->position, capsule_radius);
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
+
+    self->capsule = capsule_new(self->position, gfc_vector3d(0, 0, 1), 1.5, capsule_radius);
 	//behavior
 	self->think = player_think;
 	self->update = player_update; 
 	self->free = player_free; 
-	self->draw = NULL; 
+	self->draw = player_draw;
 	self->data = player_data_new();                            //entity custom data beyond basics
 
 	return self;
@@ -215,6 +217,52 @@ void player_update(Entity* self)
         
        
     
+}
+
+void player_draw(Entity* self) {
+    //draw self
+    if (!self)
+        return;
+    GFC_Matrix4 matrix;
+    gfc_matrix4_from_vectors(
+       matrix,
+       self->position,
+       self->rotation,
+       self->scale
+   );
+
+    gf3d_model_draw(
+        self->model,
+        matrix,
+        GFC_COLOR_WHITE,
+        0
+    );
+        
+        
+    //draw capsule      
+   if(!self->capsule || !self->collider) return;
+    GFC_Vector3D pos1, pos2, halflength;
+    GFC_Color col, amb;
+    GFC_Sphere s1, s2;
+    if (gfc_vector3d_equal(self->capsule->rotation, gfc_vector3d(0, 0, 0)))
+        halflength = gfc_vector3d_scaled(gfc_vector3d(0, 0, 1), self->capsule->length / 2);
+    else
+        halflength = gfc_vector3d_scaled(self->capsule->rotation, self->capsule->length / 2);
+
+    pos1 =gfc_vector3d_added(self->capsule->position, halflength);
+    pos2 = gfc_vector3d_subbed(self->capsule->position, halflength);
+
+    s1 = gfc_sphere(pos1.x, pos1.y, pos1.z, self->capsule->radius);
+    s2 = gfc_sphere(pos2.x, pos2.y, pos2.z, self->capsule->radius);
+    //slog("capsule: %f %f %f, %f %f %f", pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
+    col = gfc_color(0.2, 0.5, 1, 0.4);
+    amb = gfc_color(0, 0, 0, 0);
+    gf3d_draw_sphere_solid(s1, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
+    gf3d_draw_sphere_solid(s2, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
+
+    
+
+
 }
 void player_free(void* data)
 {

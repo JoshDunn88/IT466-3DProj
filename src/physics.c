@@ -18,19 +18,19 @@ Uint8 gfc_vector3d_equal(GFC_Vector3D a, GFC_Vector3D b) {
         return 0;
     return 1;
 }
-Mesh_Collider* mesh_collider_new(ObjData* obj) {
+Capsule* capsule_new(GFC_Vector3D position, GFC_Vector3D rotation, float length, float radius) {
         int j;   
-        Mesh_Collider* mc = malloc(sizeof(Mesh_Collider));
-        if (!mc) {
-            slog("could not allocate mesh collider");
+        Capsule* cap = malloc(sizeof(Capsule));
+        if (!cap) {
+            slog("could not allocate capsule");
             return NULL;
         }
 
-        mc->triangle_verts = obj->faceVerts;
-        mc->triangle_normals = obj->faceNormals;
-        mc->tri_count = obj->face_count;
-        //slog("has %d", obj->vertex_count);
-        return mc;   
+        cap->position = position;
+        cap->rotation = rotation;
+        cap->length = length;
+        cap->radius = radius;
+        return cap;   
 }
 
 GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point)
@@ -180,10 +180,4 @@ Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
         }
     }
     return collided;
-}
-
-
-void mesh_collider_free(Mesh_Collider* mc) {
-    free(mc);
-    
 }

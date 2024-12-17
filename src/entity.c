@@ -176,6 +176,8 @@ void entity_free(Entity* self)
 	slog("model freed");
 	if (self->collider) free(self->collider);
 	slog("collider freed");
+	if (self->capsule) free(self->capsule);
+	slog("capsule freed");
 	//free anthing special that may have been allocated FOR this
 	if (self->free) self->free(self->data);
 	slog("data freed");
@@ -201,6 +203,13 @@ void entity_update(Entity* self)
 		collider_update(self->collider);
 		//set entity pos to collider pos
 		gfc_vector3d_scale(self->position, self->collider->position, 1);			
+	}
+
+	if (self->capsule) {
+		//check_collisions(self->collider);
+		//capsule_update(self->capsule);
+		//set entity pos to collider pos
+		gfc_vector3d_scale(self->capsule->position, self->position, 1);
 	}
 	//meupdate
 	if (self->update) self->update(self);
@@ -243,7 +252,7 @@ void entity_draw(Entity *self)
 		gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.w/2, self->collider->primitive.s.b.h/2, self->collider->primitive.s.b.d/2), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), mineColor);
 		//if (self->collider->layer == C_PLAYER) slog("prim after: %f, %f, %f, %f, %f, %f", self->collider->primitive.s.b.x, self->collider->primitive.s.b.y, self->collider->primitive.s.b.z, self->collider->primitive.s.b.w, self->collider->primitive.s.b.h, self->collider->primitive.s.b.d);
 	}
-	if (self->collider->primitive.type == GPT_SPHERE) gf3d_draw_sphere_solid(self->collider->primitive.s.s, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), mineColor, gfc_color(0, 0, 0, 0));
+	//if (self->collider->primitive.type == GPT_SPHERE) gf3d_draw_sphere_solid(self->collider->primitive.s.s, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), mineColor, gfc_color(0, 0, 0, 0));
 
 }
 

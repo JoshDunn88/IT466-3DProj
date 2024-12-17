@@ -204,7 +204,7 @@ void collider_update(Collider* self) {
 	GFC_Vector3D oldPos = self->position;
 	//update stuff
 	gfc_vector3d_add(self->position, self->position, self->velocity);
-
+	
 	if (self->velocity.z > -0.1) self->velocity.z-= self->gravity;
 	//friction
 	self->velocity.x *= 0.6f;

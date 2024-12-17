@@ -14,6 +14,7 @@ typedef struct Entity_S
 	
 	Model*			model; // entity's model if it has one
 	Collider*		collider;
+	Capsule*		capsule; //entity's capsule (maybe only for player)
 	GFC_Vector3D	position;
 	GFC_Vector3D	rotation;
 	GFC_Vector3D	scale;

@@ -42,6 +42,8 @@ void player_think(Entity* self);
 
 void player_update(Entity* self);
 
+void player_draw(Entity* self);
+
 void player_free(void* data);
 
 void check_world_bounds(Collider* self);
