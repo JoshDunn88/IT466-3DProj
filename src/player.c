@@ -288,21 +288,10 @@ void player_draw(Entity* self) {
     GFC_Color col, amb;
     GFC_Sphere s1, s2;
 
-    GFC_Vector3D invector, forward, up, right, angs;
-    gfc_vector3d_set(invector, self->rotation.x, self->rotation.y, self->rotation.z);
-    gfc_vector3d_angle_vectors2(invector, &right, &forward, &up);
+    GFC_Edge3D e = get_capsule_endpoints(self->capsule);
 
-    //angle
-    if (gfc_vector3d_equal(self->capsule->rotation, gfc_vector3d(0, 0, 0)))
-        halflength = gfc_vector3d_scaled(gfc_vector3d(0, 1, 0), self->capsule->length / 2);
-    else
-        halflength = gfc_vector3d_scaled(forward, self->capsule->length / 2);
-
-    pos1 =gfc_vector3d_added(self->capsule->position, halflength);
-    pos2 = gfc_vector3d_subbed(self->capsule->position, halflength);
-
-    s1 = gfc_sphere(pos1.x, pos1.y, pos1.z, self->capsule->radius);
-    s2 = gfc_sphere(pos2.x, pos2.y, pos2.z, self->capsule->radius);
+    s1 = gfc_sphere(e.a.x, e.a.y, e.a.z, self->capsule->radius);
+    s2 = gfc_sphere(e.b.x, e.b.y, e.b.z, self->capsule->radius);
     //slog("capsule: %f %f %f, %f %f %f", pos1.x, pos1.y, pos1.z, pos2.x, pos2.y, pos2.z);
     col = gfc_color(0.2, 0.5, 1, 0.4);
     amb = gfc_color(0, 0, 0, 0);
@@ -331,16 +320,13 @@ void player_move_up(Entity* self, float magnitude)
         return;
     }
     GFC_Vector3D jump = { 0 };
+    GFC_Vector3D invector, forward, up, right;
+    gfc_vector3d_set(invector, self->rotation.x, self->rotation.y, self->rotation.z);
+    gfc_vector3d_angle_vectors2(invector, &right, &forward, &up);
     slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-    jump = vector3d_up(self->rotation);
-    
 
-    GFC_Vector3D forward, up, right, angs;
-    gfc_vector3d_angles(self->rotation, &angs);
-        gfc_vector3d_angle_vectors(angs, &forward, &right, &up );
-    //if (!gfc_vector3d_equal(up, gfc_vector3d(0, 0, 0)))
-       //gfc_vector3d_normalize(&up);
     slog("jump: %f,%f,%f", up.x, up.y, up.z);
+
     jump = gfc_vector3d_scaled(up, magnitude);
     //if ((temp.x + forward.x) * (temp.x + forward.x) + (temp.y + forward.y) * (temp.y + forward.y) <= maxSpeed * maxSpeed) {
     //gfc_vector3d_add(self->collider->velocity, self->collider->velocity, jump);
