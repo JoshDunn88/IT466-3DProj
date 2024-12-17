@@ -61,6 +61,9 @@ GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
     return gfc_vector3d_added(a, gfc_vector3d_scaled(ab, saturate)); 
 }
 
+GFC_Vector3D ClosestPointOnCapsule(Capsule* capsule, GFC_Triangle3D tri) {
+    //do this tomorrow
+}
 //maybe pass by pointer
 Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth) {
     GFC_Vector3D t_n, center, projected_point, c0, c1, c2;

@@ -82,21 +82,8 @@ void player_update(Entity* self)
     const Uint8* keys;
 	if (!self) return;
     if (!self->collider) return;
-    /*
-	self->position = gfc_vector3d_added(self->position, gfc_vector3d(0, 0, 0.2));
-	if (self->position.z > 60)
-		self->position = gfc_vector3d(0, 0, 0);
-   */
-        
-        
+             
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
-    
-
-        //dont walk with no input, let gravity work
-        if (self->collider) {
-           // self->collider->velocity = gfc_vector3d(0, 0, self->collider->velocity.z);
-            //if (!self->collider->gravity) self->collider->velocity.z = 0;
-        }
 
             if (keys[SDL_SCANCODE_A])
             {
@@ -141,62 +128,44 @@ void player_update(Entity* self)
 
             if (keys[SDL_SCANCODE_Q])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z += 0.02;
                 //self->capsule->rotation.z += 0.02;
                 gfc_angle_clamp_radians(&self->rotation.z);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
             if (keys[SDL_SCANCODE_E])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.z -= 0.02;
                 gfc_angle_clamp_radians(&self->rotation.z);
                // slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
             if (keys[SDL_SCANCODE_Z])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.y += 0.02;
                 gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
             if (keys[SDL_SCANCODE_X])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.y -= 0.02;
                 gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
             if (keys[SDL_SCANCODE_T])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.x += 0.02;
                 gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
             if (keys[SDL_SCANCODE_Y])
             {
-                // self->rotation = gf3d_camera_get_angles();
-               // gfc_vector3d_rotate_about_z(&self->rotation, GFC_PI); this func didnt work
                 self->rotation.x -= 0.02;
                 gfc_angle_clamp_radians(&self->rotation.y);
                 //slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-                //slog("position: %f,%f,%f", self->position.x, self->position.y, self->position.z);
             }
 
             //keydown jump
@@ -210,23 +179,13 @@ void player_update(Entity* self)
             }
             else {
                 if (SPACE) { SPACE = 0; }
-           
-                
-             
             }
 
             if (keys[SDL_SCANCODE_C])
             {
                 player_move_up(self, -moveSpeed);
             }
-            /*
-            * TODO: Rotate with mouse, strafe with a/d
-            if (keys[SDL_SCANCODE_SPACE])
-            {
-                gf3d_camera_walk_right(-moveSpeed);
-            }
-            TODO: Jump
-            */
+            
             if (keys[SDL_SCANCODE_U]) {
                 slog("ent pos: %f,%f,%f", self->position.x, self->position.y, self->position.z);
                 //slog("col pos: %f,%f,%f", self->collider->position.x, self->collider->position.y, self->collider->position.z);
@@ -253,11 +212,7 @@ void player_update(Entity* self)
             //can this go here?
             cam_follow_player(self, -10);
 
-            //if (gf2d_mouse_get_movement)
-            return;
-        
-       
-    
+            return;  
 }
 
 void player_draw(Entity* self) {
@@ -280,14 +235,11 @@ void player_draw(Entity* self) {
         GFC_COLOR_WHITE,
         0
     );
-        
-        
+           
     //draw capsule      
    if(!self->capsule || !self->collider) return;
-    GFC_Vector3D pos1, pos2, halflength;
     GFC_Color col, amb;
     GFC_Sphere s1, s2;
-
     GFC_Edge3D e = get_capsule_endpoints(self->capsule);
 
     s1 = gfc_sphere(e.a.x, e.a.y, e.a.z, self->capsule->radius);
@@ -297,11 +249,8 @@ void player_draw(Entity* self) {
     amb = gfc_color(0, 0, 0, 0);
     gf3d_draw_sphere_solid(s1, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
     gf3d_draw_sphere_solid(s2, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
-
-    
-
-
 }
+
 void player_free(void* data)
 {
 	if (!data) return;
@@ -319,17 +268,19 @@ void player_move_up(Entity* self, float magnitude)
         slog("player has no collider to move");
         return;
     }
+
     GFC_Vector3D jump = { 0 };
     GFC_Vector3D invector, forward, up, right;
     gfc_vector3d_set(invector, self->rotation.x, self->rotation.y, self->rotation.z);
     gfc_vector3d_angle_vectors2(invector, &right, &forward, &up);
+    if (gfc_vector3d_equal(invector, gfc_vector3d(0, 0, 0)))
+        jump = gfc_vector3d_scaled(gfc_vector3d(0, 0, 1), magnitude);
+    else
+        jump = gfc_vector3d_scaled(right, -magnitude);
     slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
-
     slog("jump: %f,%f,%f", up.x, up.y, up.z);
-
-    jump = gfc_vector3d_scaled(up, magnitude);
-    //if ((temp.x + forward.x) * (temp.x + forward.x) + (temp.y + forward.y) * (temp.y + forward.y) <= maxSpeed * maxSpeed) {
-    //gfc_vector3d_add(self->collider->velocity, self->collider->velocity, jump);
+    //negative why??
+    //do additive probably better
     self->collider->velocity= jump;
 }
 
@@ -352,10 +303,6 @@ void player_walk_forward(Entity* self, float magnitude)
     //if ((temp.x + forward.x) * (temp.x + forward.x) + (temp.y + forward.y) * (temp.y + forward.y) <= maxSpeed * maxSpeed) {
         temp.x += forward.x;
         temp.y += forward.y;
-    
-    
-    
-
 }
 
 void player_walk_right(Entity* self, float magnitude)
@@ -377,9 +324,6 @@ void player_walk_right(Entity* self, float magnitude)
     //if ((temp.x + right.x) * (temp.x + right.x) + (temp.y + right.y) * (temp.y + right.y) <= maxSpeed * maxSpeed) {
         temp.x += right.x;
         temp.y += right.y;
-    
-    
-
 }
 void cam_follow_player(Entity* self, float offset) 
 {

@@ -30,7 +30,7 @@ Capsule* capsule_new(GFC_Vector3D position, GFC_Vector3D rotation, float length,
 GFC_Edge3D get_capsule_endpoints(Capsule* capsule);
 
 //sphere v triangle, capsule stuff from https://wickedengine.net/2020/04/capsule-collision-detection/
-GFC_Vector3D ClosestPointOnCapsule(GFC_Vector3D a, GFC_Vector3D b, GFC_Triangle3D tri);
+GFC_Vector3D ClosestPointOnCapsule(Capsule* capsule, GFC_Triangle3D tri);
 GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vector3D point);
 Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth);
 void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth);
