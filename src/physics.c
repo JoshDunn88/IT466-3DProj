@@ -39,8 +39,8 @@ void gfc_vector3d_angle_vectors3(GFC_Vector3D angles, GFC_Vector3D* forward, GFC
     if (up)
     {
         up->x =  (cr * sp * cy + -sr * -sy);
-        up->y = -1 * (cr * sp * sy + -sr * cy);
-        up->z = cr * cp;
+        up->y =  (cr * sp * sy + -sr * cy);
+        up->z =  cr * cp;
     }
 }
 

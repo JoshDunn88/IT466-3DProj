@@ -58,11 +58,11 @@ void prey_update(Entity* self) {
 	if (self->collider->velocity.x == 0) self->collider->velocity.x = -0.01;
 	if (self->collider->position.x > position1.x) {
 		self->collider->position.x = position1.x;
-		self->collider->velocity.x = -0.01;
+		self->collider->velocity.x = -0.01f;
 	}
 	else if (self->collider->position.x < position2.x) {
 		self->collider->position.x = position2.x;
-		self->collider->velocity.x = 0.01;
+		self->collider->velocity.x = 0.01f;
 	}
 		
 }
