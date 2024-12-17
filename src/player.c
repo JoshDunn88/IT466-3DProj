@@ -225,7 +225,7 @@ void player_draw(Entity* self) {
     gfc_matrix4_from_vectors(
        matrix,
        self->position,
-       self->rotation,
+       corrected,
        self->scale
    );
 

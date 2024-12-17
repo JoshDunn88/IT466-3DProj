@@ -38,6 +38,7 @@ void entity_system_init(Uint32 maxEnts)
 
 
 void check_collisions(Collider* self) {
+	if (!self) return;
 	int i;
 	GFC_Vector3D self_sub_velocity;
 	GFC_Vector3D other_sub_velocity;
@@ -45,6 +46,7 @@ void check_collisions(Collider* self) {
 	for (i = 0; i < _entity_manager.entityMax; i++) {
 		if (!_entity_manager.entityList[i]._inuse) continue;
 		if (!_entity_manager.entityList[i].alive) continue;
+		if (!_entity_manager.entityList[i].collider) continue;
 		//skip same layer collisions
 		if (self->layer == _entity_manager.entityList[i].collider->layer) return;
 		int it;
@@ -106,9 +108,11 @@ Entity* entity_get_by_collider(Collider* self) {
 
 void entity_clear_all(Entity* ignore) 
 {
+
 	int i;
 	for (i = 0; i < _entity_manager.entityMax; i++) {
-		if (&_entity_manager.entityList[i] == ignore) continue;
+		if (ignore && &_entity_manager.entityList[i] == ignore) continue;
+		_entity_manager.entityList[i]._inuse = false;
 		//this was wrong?
 		//if (!_entity_manager.entityList[i]._inuse) continue;
 		//do specific free
@@ -162,6 +166,7 @@ Entity* entity_new()
 		_entity_manager.entityList[i].collider = NULL;
 		_entity_manager.entityList[i].alive = 1;
 		//_entity_manager.entityList[i].velocity = gfc_vector3d(0, 0, 0);
+		slog("new entity success");
 		return &_entity_manager.entityList[i];
 	}
 	slog("no more open entity slots");
@@ -172,15 +177,26 @@ Entity* entity_new()
 void entity_free(Entity* self)
 {
 	if (!self) return;
-	gf3d_model_free(self->model);
-	slog("model freed");
-	if (self->collider) free(self->collider);
-	slog("collider freed");
-	if (self->capsule) free(self->capsule);
-	slog("capsule freed");
+	if (self->model) {
+		gf3d_model_free(self->model);
+		slog("model freed");
+	}
+	
+	if (self->collider) {
+		free(self->collider);
+		slog("collider freed");
+	}
+	
+	if (self->capsule){
+		free(self->capsule);
+		slog("capsule freed");
+	}
 	//free anthing special that may have been allocated FOR this
-	if (self->free) self->free(self->data);
-	slog("data freed");
+	if (self->free) {
+		self->free(self->data);
+		slog("data freed");
+	}
+	
 }
 
 void entity_think (Entity* self)

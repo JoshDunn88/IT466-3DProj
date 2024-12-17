@@ -11,9 +11,10 @@ Collider* collider_setup(GFC_Primitive prim) {
 		return NULL;
 	}
 
-	self->primitive = prim;
+	
 	self->velocity = gfc_vector3d(0, 0, 0);
 	//change this to account for other prim types later
+	self->primitive = prim;
 	if (prim.type == GPT_BOX) {
 		self->scale = gfc_vector3d(prim.s.b.w, prim.s.b.h, prim.s.b.d);
 		self->position = gfc_vector3d(prim.s.b.x + prim.s.b.w/2, prim.s.b.y + prim.s.b.h/2, prim.s.b.z + prim.s.b.d/2);
