@@ -73,6 +73,7 @@ int main(int argc,char *argv[])
     gfc_input_init("config/input.cfg");
     gfc_config_def_init();
     gfc_action_init(1024);
+    gfc_audio_init(10, 4, 1, 1, 0, 0);
     //gf3d init
     gf3d_vgraphics_init("config/setup.cfg");
     gf3d_materials_init();
@@ -90,6 +91,7 @@ int main(int argc,char *argv[])
 
     //game setup
     //local variables
+    
     Entity* player;
     //Entity* prey, *prey2, * prey3, * prey4;
     Entity* ground;
@@ -147,7 +149,9 @@ int main(int argc,char *argv[])
         slog("vertex count %d", currobj->vertex_count);
         slog("normal count %d", currobj->normal_count);
     //slog
-    
+    set_player(gm, player);
+    if (gm && gm->bgm)
+        gfc_sound_play(gm->bgm, 100, 50, -1, -1);
     // main game loop    
     while(!_done)
     {
@@ -165,9 +169,9 @@ int main(int argc,char *argv[])
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
-
-        game_update(gm);
-        if (!gm->main_menu) {
+        if (gm)
+            game_update(gm);
+        if (gm && !gm->main_menu) {
             if (!gm->pause) {
                 //ent stuff here after input before draws? 
                 entity_think_all();
@@ -203,8 +207,11 @@ int main(int argc,char *argv[])
                 //2D draws
                 gf2d_mouse_draw();
             }
-            if (gm->main_menu)
-                   draw_menu();
+            if (gm->main_menu) {
+                draw_menu();
+                
+            }
+                  
 
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
                 //make ui function suite and file later probably  
@@ -221,7 +228,9 @@ int main(int argc,char *argv[])
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
     //mesh_collider_free(mc);
+    game_manager_free(gm);
     free(gm); //make this atexit function later
+   // Mix_CloseAudio();
     slog("gf3d program end");
     //SDL_SetRelativeMouseMode(SDL_FALSE); //probably dont need this but
     //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_FALSE);
