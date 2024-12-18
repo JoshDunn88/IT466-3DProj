@@ -268,7 +268,7 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D*
     
 }
 
-void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth) {
+void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D normal, float depth, GFC_Vector3D* new_pos, GFC_Vector3D* new_vel) {
     if (!col) return;
     
         float velocity_length = gfc_vector3d_magnitude(col->velocity);
@@ -276,10 +276,10 @@ void sphere_to_triangle_resolution(Collider* col, GFC_Triangle3D t, GFC_Vector3D
         GFC_Vector3D velocity_normalized = gfc_vector3d_scaled(col->velocity, 1 / velocity_length);
         GFC_Vector3D undesired_motion = gfc_vector3d_scaled(normal, gfc_vector3d_dot_product(velocity_normalized, normal));
         GFC_Vector3D desired_motion = gfc_vector3d_subbed(velocity_normalized, undesired_motion);
-        col->velocity = gfc_vector3d_scaled(desired_motion, velocity_length);
+        *new_vel= gfc_vector3d_scaled(desired_motion, velocity_length);
     }
     // Remove penetration (penetration epsilon added to handle infinitely small penetration):
-    col->position = gfc_vector3d_added(col->position, gfc_vector3d_scaled(normal, (depth + 0.0001)));
+    *new_pos = gfc_vector3d_added(col->position, gfc_vector3d_scaled(normal, (depth + 0.0001)));
 
 }
 
@@ -292,7 +292,7 @@ Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
     GFC_Sphere sphere = col->primitive.s.s;
     for (i = 0; i < obj->face_count; i++)
     {
-        GFC_Vector3D p0, p1, p2;
+        GFC_Vector3D p0, p1, p2, pos, vel;
         p0 = obj->vertices[obj->faceVerts[i].verts[0]];
         p1 = obj->vertices[obj->faceVerts[i].verts[1]];
         p2 = obj->vertices[obj->faceVerts[i].verts[2]];
@@ -300,15 +300,17 @@ Uint8 sphere_to_mesh_collision(Collider* col, ObjData* obj) {
         //slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
         //curently stops on first colliding triangle
         if (sphere_to_triangle_collision(sphere, tri, &pen_norm, &pen_depth)) {
-            sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth);
-            slog("norm: %f, %f, %f  depth: %f", pen_norm.x, pen_norm.y, pen_norm.z, pen_depth);
+            sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth, &pos, &vel);
+            col->position = pos;
+            col->velocity = vel;
+            //slog("norm: %f, %f, %f  depth: %f", pen_norm.x, pen_norm.y, pen_norm.z, pen_depth);
             collided = true;
         }
     }
     return collided;
 }
 
-Uint8 capsule_to_mesh_collision(Capsule* cap, ObjData* obj) {
+Uint8 capsule_to_mesh_collision(Collider* col, Capsule* cap, ObjData* obj) {
     if (!cap || !obj) return false;
     int i;
     Uint8 collided = false;
@@ -316,7 +318,7 @@ Uint8 capsule_to_mesh_collision(Capsule* cap, ObjData* obj) {
     float pen_depth = 0;
     for (i = 0; i < obj->face_count; i++)
     {
-        GFC_Vector3D p0, p1, p2, closest;
+        GFC_Vector3D p0, p1, p2, closest, pos, vel;
         p0 = obj->vertices[obj->faceVerts[i].verts[0]];
         p1 = obj->vertices[obj->faceVerts[i].verts[1]];
         p2 = obj->vertices[obj->faceVerts[i].verts[2]];
@@ -326,10 +328,12 @@ Uint8 capsule_to_mesh_collision(Capsule* cap, ObjData* obj) {
         closest = ClosestPointOnCapsule(cap, tri);
         GFC_Sphere sphere = gfc_sphere(closest.x, closest.y, closest.z, cap->radius);
         if (sphere_to_triangle_collision(sphere, tri, &pen_norm, &pen_depth)) {
-           // sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth);
+            sphere_to_triangle_resolution(col, tri, pen_norm, pen_depth, &pos, &vel);
+            col->position = pos;
+            col->velocity = vel;
            slog("norm: %f, %f, %f  depth: %f", pen_norm.x, pen_norm.y, pen_norm.z, pen_depth);
             collided = true;
-            slog("collided");
+            //slog("collided");
         }
     }
     return collided;

@@ -200,7 +200,7 @@ int main(int argc,char *argv[])
         entity_think_all();
         //check mesh here
         if (player->capsule)
-            capsule_to_mesh_collision(player->capsule, currobj);
+            capsule_to_mesh_collision(player->collider, player->capsule, currobj);
         entity_update_all();
 
         //make function later
