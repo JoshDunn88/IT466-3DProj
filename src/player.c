@@ -384,7 +384,23 @@ void cam_orbit(Entity* self) {
     dat->cam_target.z -= mouse_delta.x/20;
    // gfc_vector3d_rotate_about_z(&dat->cam_target, mouse_delta.x);
 }
+void reset_player(Entity* self) {
+    if (!self) return;
+    Player_Data* dat = (struct Player_Data*)(self->data);
+    if (dat) {
+        dat->cam_target = gfc_vector3d(0, 0, 0);
+        dat->health = 100;
+        dat->prey_eaten = 0;
+    }
+    self->alive = true;
+    self->position = gfc_vector3d(0, 0, 0);
+    self->rotation = gfc_vector3d(0, 0, 0);
+    if (self->collider){
+        self->rotation = gfc_vector3d(0, 0, 0);
+        }
+    
 
+}
 void check_world_bounds(Collider* self) {
     int cubic_bound = 30;
     if (!self) return;

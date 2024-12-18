@@ -167,40 +167,45 @@ int main(int argc,char *argv[])
         gf2d_font_update();
 
         game_update(gm);
-        if (!gm->pause){
-            //ent stuff here after input before draws? 
-            entity_think_all();
-            //check mesh here
-            if (player->capsule)
-                capsule_to_mesh_collision(player->collider, player->capsule, currobj);
+        if (!gm->main_menu) {
+            if (!gm->pause) {
+                //ent stuff here after input before draws? 
+                entity_think_all();
+                //check mesh here
+                if (player->capsule)
+                    capsule_to_mesh_collision(player->collider, player->capsule, currobj);
 
-            entity_update_all();
+                entity_update_all();
 
-            //camera work should prob go last - Josh
-            //camera updates
-            gf3d_camera_controls_update();
-        
-            gf3d_camera_update_view();
-            gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+                //camera work should prob go last - Josh
+                //camera updates
+                gf3d_camera_controls_update();
+
+                gf3d_camera_update_view();
+                gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+            }
         }
-
         gf3d_vgraphics_render_start();
-
-            //3D draws      
-                gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
+            if (!gm->main_menu) {
+                //3D draws      
+                gf3d_model_draw_sky(sky, skyMat, GFC_COLOR_WHITE);
                 //always do ui draws after world draws, which are after backgroun draws (skybox)
-                entity_draw_all();         
+                entity_draw_all();
 
-            /*    gf3d_model_draw(
+                /*    gf3d_model_draw(
                     dino,
                     dinoMat,
                     GFC_COLOR_WHITE,
                     0);
                 */
-                
+
                 draw_origin();
-            //2D draws
+                //2D draws
                 gf2d_mouse_draw();
+            }
+            if (gm->main_menu)
+                   draw_menu();
+
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
                 //make ui function suite and file later probably  
                 // 

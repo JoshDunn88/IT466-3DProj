@@ -63,9 +63,9 @@ void game_update(Game_Manager* self) {
     {
         if (!ESC) {
             if (self->main_menu)
-                load_from_menu(self, "placeholder");
+                self->main_menu = false; //load_from_menu(self, "placeholder");
             else
-                exit_to_menu(self);
+                self->main_menu = true; //exit_to_menu(self);
             ESC = true;
         }
     }
@@ -73,4 +73,8 @@ void game_update(Game_Manager* self) {
         ESC = false;
     }
 
+}
+
+void draw_menu() {
+    gf2d_font_draw_line_tag("Press Esc to start the game", FT_H1, GFC_COLOR_GREEN, gfc_vector2d(600, 600));
 }
