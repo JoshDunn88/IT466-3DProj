@@ -276,7 +276,7 @@ void player_move_up(Entity* self, float magnitude)
     if (gfc_vector3d_equal(invector, gfc_vector3d(0, 0, 0)))
         jump = gfc_vector3d_scaled(gfc_vector3d(0, 0, 1), magnitude);
     else
-        jump = gfc_vector3d_scaled(right, magnitude);
+        jump = gfc_vector3d_scaled(up, magnitude);
     slog("rotation: %f,%f,%f", self->rotation.x, self->rotation.y, self->rotation.z);
     slog("jump: %f,%f,%f", up.x, up.y, right.z);
     //negative why??

@@ -17,10 +17,10 @@ void gfc_vector3d_angle_vectors3(GFC_Vector3D angles, GFC_Vector3D* forward, GFC
     angle = angles.z;
     sy = sinf(angle);
     cy = cosf(angle);
-    angle = angles.x;
+    angle = angles.y;
     sp = sinf(angle);
     cp = cosf(angle);
-    angle = angles.y;
+    angle = angles.x;
     sr = sinf(angle);
     cr = cosf(angle);
 
@@ -47,7 +47,7 @@ void gfc_vector3d_angle_vectors3(GFC_Vector3D angles, GFC_Vector3D* forward, GFC
 GFC_Edge3D get_capsule_endpoints(Capsule* self) {
     GFC_Vector3D invector, forward, up, right;
     GFC_Vector3D pos1, pos2, halflength;
-    gfc_vector3d_set(invector, self->rotation.y, self->rotation.x, self->rotation.z);
+    gfc_vector3d_set(invector, self->rotation.x, self->rotation.y, self->rotation.z);
     gfc_vector3d_angle_vectors3(invector, &forward, &right, &up);
 
     //angle
