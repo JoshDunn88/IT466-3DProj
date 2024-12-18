@@ -219,7 +219,7 @@ int main(int argc,char *argv[])
                     0);
                 */
 
-                draw_origin();
+                //draw_origin();
                 //2D draws
                 gf2d_mouse_draw();
             }

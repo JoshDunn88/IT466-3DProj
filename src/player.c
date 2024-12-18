@@ -256,7 +256,7 @@ void player_draw(Entity* self) {
      //draw box collider
     if (!self->collider || self->collider->primitive.type != GPT_BOX)
         return;
-    gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.w / 2, self->collider->primitive.s.b.h / 2, self->collider->primitive.s.b.d / 2), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.8, 0.2, 0.8, 0.4));
+    //gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.w / 2, self->collider->primitive.s.b.h / 2, self->collider->primitive.s.b.d / 2), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.8, 0.2, 0.8, 0.4));
 }
 
 void draw_hud(Entity* self) {
