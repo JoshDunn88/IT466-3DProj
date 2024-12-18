@@ -25,7 +25,7 @@
 #include "gf3d_texture.h"
 #include "gf3d_draw.h"
 
-#include "gf3d_obj_load.h"
+//#include "gf3d_obj_load.h" in level now
 
 //#include "entity.h" in player.h
 //#include "player.h" in level.h
@@ -92,15 +92,15 @@ int main(int argc,char *argv[])
     //game setup
     //local variables
     
-    Entity* player;
+    //Entity* player;
     //Entity* prey, *prey2, * prey3, * prey4;
-    Entity* ground;
-    Model* sky, * dino;
-    GFC_Matrix4 skyMat, dinoMat;
+    //Entity* ground;
+    Model* sky;
+    GFC_Matrix4 skyMat;
     Game_Manager* gm = new_game_manager();
-    ground = environment_new();
-    player = player_new();
-    set_player(gm, player);
+    //ground = environment_new();
+    //player = player_new();
+    //set_player(gm, player);
 
     gf2d_mouse_load("actors/mouse.actor");
     sky = gf3d_model_load("models/sky.model");
@@ -121,9 +121,7 @@ int main(int argc,char *argv[])
     */
     //ground = environment_new();
     //ground->position = gfc_vector3d(0, 0, -5);
-        Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
-        MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
-        ObjData* currobj = currprim->objData;
+        
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(0,0,5));
@@ -146,12 +144,12 @@ int main(int argc,char *argv[])
         
     //windows
 
-    slog("vertex count %d", currobj->vertex_count);
-    slog("normal count %d", currobj->normal_count);
-    Level uno = load_level_config_from_file("levels/level1.cfg");
-    slog("prey count %d", uno.prey_total);
+    //slog("vertex count %d", currobj->vertex_count);
+    //slog("normal count %d", currobj->normal_count);
+    gm->current_level = load_level_config_from_file(gm, "levels/level1.cfg");
+    //slog("prey count %d", uno.prey_total);
     //slog
-    set_player(gm, player);
+    //set_player(gm, player);
     if (gm && gm->bgm)
         gfc_sound_play(gm->bgm, 100, 50, -1, -1);
     // main game loop    
@@ -171,15 +169,16 @@ int main(int argc,char *argv[])
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
-        if (gm)
+        if (gm) {
             game_update(gm);
+        }
         if (gm && !gm->main_menu) {
             if (!gm->pause) {
                 //ent stuff here after input before draws? 
                 entity_think_all();
                 //check mesh here
-                if (player->capsule)
-                    capsule_to_mesh_collision(player->collider, player->capsule, currobj);
+                if (gm->player->capsule)
+                    capsule_to_mesh_collision(gm->player->collider, gm->player->capsule, gm->current_level.level_obj);
 
                 entity_update_all();
 
@@ -214,7 +213,7 @@ int main(int argc,char *argv[])
                 
             }
             else {
-                draw_hud(player);
+                draw_hud(gm->player);
             }
 
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
@@ -231,7 +230,7 @@ int main(int argc,char *argv[])
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
-    //mesh_collider_free(mc);
+    //mesh_collider_free(mc); 
     game_manager_free(gm);
     free(gm); //make this atexit function later
    // Mix_CloseAudio();

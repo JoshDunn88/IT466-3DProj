@@ -29,7 +29,7 @@ typedef struct Collider_S
 	GFC_Vector3D	position; //center position 
 	
 	GFC_Vector3D	scale; // hmmm
-	GFC_Vector3D	offset; //offset from parent position
+	GFC_Vector3D	offset; //offset from parent position not yet implemented, do this so player collider is mouth trigger?
 	float			gravity;
 
 	C_Layer			layer;

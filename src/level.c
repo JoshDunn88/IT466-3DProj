@@ -1,7 +1,7 @@
 #include "simple_logger.h"
 #include "level.h"
 
-Uint8 P, ESC;
+Uint8 P, ESC, ONE, TWO;
 
 void set_player(Game_Manager* gm, Entity* player) {
     if (!gm || !player) return;
@@ -37,21 +37,48 @@ void load_from_menu(Game_Manager* game_manager, const char* filename) {
     //do level stuff
     //config
 }
-Level load_level_config_from_file(const char* filename) {
+Level load_level_config_from_file(Game_Manager* game_manager, const char* filename) {
     SJson* config = sj_load(filename);
     SJson* current = NULL;
     SJson* item, *preylist, *predatorlist;
-    Entity* prey, *predator;
+    Entity* prey, *predator, *environment, *player;
+    const char* meshfile;
+    Model* world;
     //SJson* current = NULL;
     Level level = { 0 };
     int i;
 
     //start level stuff like entity init etc? or separate function?
 
+    //player stuff
+    player = player_new();
+    set_player(game_manager, player);
+
+
     if (!config) {
         slog("failed to load level from ");
             return level;
     }
+    current = sj_object_get_value(config, "world");
+    if (current) {
+        meshfile = sj_object_get_value_as_string(current, "mesh");
+        environment = environment_new();
+        environment->position = gfc_vector3d(0, 0, 0);
+        environment->scale = gfc_vector3d(1, 1, 1);
+        environment->rotation = gfc_vector3d(0, 0, 0);
+        world = gf3d_model_load_full(meshfile, sj_object_get_value_as_string(current, "texture"));
+        if (world) {
+            environment->model = world;
+            Mesh* currmesh = (struct Mesh*)(world->mesh_list->elements[0].data);
+            MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
+            level.level_obj = currprim->objData;
+        }
+        else
+            slog("could not load world");
+    }
+    else
+        slog("did not find world");
+    
     current = sj_object_get_value(config, "prey");
     if (current)
     {
@@ -102,7 +129,14 @@ Level load_level_config_from_file(const char* filename) {
 
 
 
-void change_level(Game_Manager* game_manager, const char* filename) {}
+Level change_level(Game_Manager* game_manager, const char* filename) {
+    entity_clear_all(NULL);
+    game_manager->current_level;
+    game_manager->pause = false;
+    game_manager->main_menu = true;
+    return load_level_config_from_file(game_manager, filename);    
+}
+
 void level_complete(Game_Manager* game_manager) {}
 void level_fail(Game_Manager* game_manager) {}
 void game_update(Game_Manager* self) {
@@ -158,7 +192,27 @@ void game_update(Game_Manager* self) {
     else if (ESC){
         ESC = false;
     }
-
+    if (keys[SDL_SCANCODE_1])
+    {
+        if (!ONE) {
+            self->current_level = change_level(self, "levels/level1.cfg");     
+            ONE = true;
+        }
+    }
+    else if (ONE) {
+        ONE = false;
+    }
+    if (keys[SDL_SCANCODE_2])
+    {
+        if (!TWO) {
+            self->current_level = change_level(self, "levels/level2.cfg");
+            TWO = true;
+        }
+    }
+    else if (TWO) {
+        TWO = false;
+    }
+    
 }
 
 void draw_menu() {
