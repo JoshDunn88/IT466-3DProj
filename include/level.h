@@ -9,6 +9,8 @@ typedef struct Level_S
 	Entity*			prey_list;
 	int				predator_total;
 	int				prey_total;
+	Uint8			complete;
+	Uint8			failed;
 	//current level name
 
 }Level;
@@ -35,7 +37,8 @@ void exit_to_menu(Game_Manager* game_manager);
 void load_from_menu(Game_Manager* game_manager, const char* filename);
 void draw_menu();
 
-Level get_level_from_file(const char* filename);
+Level load_level_config_from_file(const char* filename);
+Level get_level_from_config(SJson* config);
 void change_level(Game_Manager* game_manager, const char* filename); //take level name? config folder?
 
 void level_complete(Game_Manager* game_manager);

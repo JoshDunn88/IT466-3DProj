@@ -35,9 +35,32 @@ void load_from_menu(Game_Manager* game_manager, const char* filename) {
     if (!game_manager || !filename)
         return;
     //do level stuff
+    //config
+}
+Level load_level_config_from_file(const char* filename) {
+    SJson* config = sj_load(filename);
+    SJson* current = NULL;
+    Level level = { 0 };
+    if (!config) {
+        slog("failed to load level from ");
+            return level;
+    }
+    current = sj_object_get_value(config, "world");
+    if (current)
+    {
+        level.
+        primitive.s.t = gfc_triangle_from_config(shape);
+        return primitive;
+    }
+    shape = sj_object_get_value(config, "plane");
+
 
 }
-Level get_level_from_file(const char* filename) {}
+        }
+        return primitive;
+    }
+}
+
 void change_level(Game_Manager* game_manager, const char* filename) {}
 void level_complete(Game_Manager* game_manager) {}
 void level_fail(Game_Manager* game_manager) {}
