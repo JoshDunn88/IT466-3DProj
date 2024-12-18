@@ -1,1 +1,5 @@
-none so far
+player model - me
+level 1 texture - Professor Kehoe
+level 2 texture - Professor Kehoe
+Menu Song https://freesound.org/people/hermanruzh/sounds/617285/
+Menu Sound https://freesound.org/people/CHARLIESMILER/sounds/776021/

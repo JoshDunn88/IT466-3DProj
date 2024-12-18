@@ -28,6 +28,7 @@ typedef struct Prey_Data_S
 Entity* prey_new();
 
 void prey_think(Entity* self);
+void prey_move_away(Entity* self, Entity* player);
 void prey_update(Entity* self);
 void prey_free(Entity* self);
 void prey_eaten(Collider* self, Collider* other);

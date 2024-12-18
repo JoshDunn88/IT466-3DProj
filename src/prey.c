@@ -49,6 +49,9 @@ Entity* prey_new()
 void prey_think(Entity* self) {
 
 }
+void prey_move_away(Entity* self, Entity* player) {
+
+}
 void prey_update(Entity* self) {
 	GFC_Vector3D position1, position2;
 	if (!self || !self->collider) return;
