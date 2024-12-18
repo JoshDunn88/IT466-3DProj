@@ -43,7 +43,7 @@ Entity* player_new()
 
 	
 	//self->name = "playerr";
-    float capsule_radius = 0.5;
+    float capsule_radius = 1;
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(2, 2, 2);

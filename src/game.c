@@ -199,8 +199,8 @@ int main(int argc,char *argv[])
         //ent stuff here after input before draws? 
         entity_think_all();
         //check mesh here
-        if (player->collider)
-            sphere_to_mesh_collision(player->collider, currobj);
+        if (player->capsule)
+            capsule_to_mesh_collision(player->capsule, currobj);
         entity_update_all();
 
         //make function later
