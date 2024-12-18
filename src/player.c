@@ -396,10 +396,16 @@ void reset_player(Entity* self) {
     self->position = gfc_vector3d(0, 0, 0);
     self->rotation = gfc_vector3d(0, 0, 0);
     if (self->collider){
-        self->rotation = gfc_vector3d(0, 0, 0);
+        self->collider->velocity = gfc_vector3d(0, 0, 0);
+        self->collider->position = gfc_vector3d(0, 0, 0);
+        collider_update(self->collider);
         }
-    
-
+    if (self->capsule) {
+        self->capsule->position = gfc_vector3d(0, 0, 0);
+        self->capsule->rotation = gfc_vector3d(0, 1, 0);
+        //self->capsule->
+    }
+    slog("player reset");
 }
 void check_world_bounds(Collider* self) {
     int cubic_bound = 30;

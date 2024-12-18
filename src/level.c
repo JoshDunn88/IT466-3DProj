@@ -62,8 +62,12 @@ void game_update(Game_Manager* self) {
     if (keys[SDL_SCANCODE_ESCAPE])
     {
         if (!ESC) {
-            if (self->main_menu)
-                self->main_menu = false; //load_from_menu(self, "placeholder");
+            if (self->main_menu) {
+                self->main_menu = false;
+                if(self->player)
+                    reset_player(self->player);
+            }
+           //load_from_menu(self, "placeholder");
             else
                 self->main_menu = true; //exit_to_menu(self);
             ESC = true;
