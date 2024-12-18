@@ -71,6 +71,7 @@ Level load_level_config_from_file(const char* filename) {
                  prey = prey_new(); 
                  sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->collider->position); //fix this with spawn function later
                  sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->position);
+                 collider_update(prey->collider);
                  slog("spawned new prey at %f, %f, %f ", prey->position.x, prey->position.y, prey->position.z);
                  //sj_get_string_value(sj_object_get_value(item, "font"));
                // if (str)
