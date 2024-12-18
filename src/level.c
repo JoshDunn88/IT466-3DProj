@@ -45,21 +45,28 @@ Level load_level_config_from_file(const char* filename) {
         slog("failed to load level from ");
             return level;
     }
-    current = sj_object_get_value(config, "world");
+    current = sj_object_get_value(config, "preylist");
     if (current)
     {
-        level.
-        primitive.s.t = gfc_triangle_from_config(shape);
-        return primitive;
+        slog("about to get count");
+        level.prey_total = sj_object_get_int32(current, "count", NULL);
+        //primitive.s.t = gfc_triangle_from_config(shape);
+        //return primitive;
     }
-    shape = sj_object_get_value(config, "plane");
+    else
+        slog("failed to load preylist");
+
+    slog("finna free");
+    sj_free(config);
+    //sj_free(current);
+    //slog("finna free 2");
+    //free(config); 
+    slog("returning level");
+    return level;
+}
 
 
-}
-        }
-        return primitive;
-    }
-}
+
 
 void change_level(Game_Manager* game_manager, const char* filename) {}
 void level_complete(Game_Manager* game_manager) {}

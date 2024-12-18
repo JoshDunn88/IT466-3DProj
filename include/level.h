@@ -4,7 +4,7 @@
 #include "player.h"
 
 typedef struct Level_S
-{
+{	
 	Entity*			predator_list;
 	Entity*			prey_list;
 	int				predator_total;
@@ -21,7 +21,7 @@ typedef struct Game_Manager_S
 	GFC_Sound*		bgm; //background music
 	GFC_Sound*		menu_sound; //menu transition noise
 	Level			current_level;
-	char*			current_level_file;
+	char*			current_level_file; //GFC_TextLine	name;
 	Uint8			pause;
 	Uint8			main_menu;
 	
@@ -38,7 +38,7 @@ void load_from_menu(Game_Manager* game_manager, const char* filename);
 void draw_menu();
 
 Level load_level_config_from_file(const char* filename);
-Level get_level_from_config(SJson* config);
+//Level get_level_from_config(SJson* config);
 void change_level(Game_Manager* game_manager, const char* filename); //take level name? config folder?
 
 void level_complete(Game_Manager* game_manager);

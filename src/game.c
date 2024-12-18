@@ -146,8 +146,10 @@ int main(int argc,char *argv[])
         
     //windows
 
-        slog("vertex count %d", currobj->vertex_count);
-        slog("normal count %d", currobj->normal_count);
+    slog("vertex count %d", currobj->vertex_count);
+    slog("normal count %d", currobj->normal_count);
+    Level uno = load_level_config_from_file("levels/level1.cfg");
+    slog("prey count %d", uno.prey_total);
     //slog
     set_player(gm, player);
     if (gm && gm->bgm)
