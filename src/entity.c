@@ -215,7 +215,7 @@ void entity_update(Entity* self)
 	
 
 	if (self->collider) {
-		//check_collisions(self->collider);
+		check_collisions(self->collider);
 		collider_update(self->collider);
 		//set entity pos to collider pos
 		gfc_vector3d_scale(self->position, self->collider->position, 1);			

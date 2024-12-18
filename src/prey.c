@@ -25,13 +25,13 @@ Entity* prey_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(0.1, 0.1, 0.1);
 	self->model = gf3d_model_load("models/dino.model"); 
-	self->collider = box_collider_new(gfc_vector3d(0, 5, 0), gfc_vector3d(1.1, 1.1, 1.1));
+	self->collider = box_collider_new(gfc_vector3d(0, 0, 0), gfc_vector3d(1.1, 1.1, 1.1));
 	//self->collider = sphere_collider_new(gfc_vector3d(0, 5, 0), 1);
 	self->position = self->collider->position;
 	self->collider->layer = C_PREY;
 	self->collider->isTrigger = 1;
 	self->collider->triggerActive = 0;
-	self->collider->gravity = 0.002;
+	self->collider->gravity = 0.000;
 	self->collider->onTriggerEnter = prey_eaten;
 	self->collider->onTriggerExit = prey_chillin;
 	self->collider->whileTrigger = prey_chillin;

@@ -213,13 +213,15 @@ int main(int argc,char *argv[])
                 draw_menu();
                 
             }
-                  
+            else {
+                draw_hud(player);
+            }
 
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
                 //make ui function suite and file later probably  
                 // 
                 //hud       
-                //draw_hud(player);
+                
                 //slog("about to do UI");
                 
         gf3d_vgraphics_render_end();

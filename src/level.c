@@ -40,18 +40,51 @@ void load_from_menu(Game_Manager* game_manager, const char* filename) {
 Level load_level_config_from_file(const char* filename) {
     SJson* config = sj_load(filename);
     SJson* current = NULL;
+    SJson* item, *preylist, *predatorlist;
+    Entity* prey, *predator;
+    //SJson* current = NULL;
     Level level = { 0 };
+    int i;
+
+    //start level stuff like entity init etc? or separate function?
+
     if (!config) {
         slog("failed to load level from ");
             return level;
     }
-    current = sj_object_get_value(config, "preylist");
+    current = sj_object_get_value(config, "prey");
     if (current)
     {
         slog("about to get count");
-        level.prey_total = sj_object_get_int32(current, "count", NULL);
-        //primitive.s.t = gfc_triangle_from_config(shape);
-        //return primitive;
+        preylist = sj_object_get_value(current, "preylist");
+        level.prey_total = sj_array_get_count(preylist);
+        if (level.prey_total == 0)
+        {
+            slog("prey config has no prey");
+        }
+        else
+        {
+            for (i = 0; i < level.prey_total; i++)
+            {
+                item = sj_array_get_nth(preylist, i);
+                if (!item)continue;
+                 prey = prey_new(); 
+                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->collider->position); //fix this with spawn function later
+                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->position);
+                 slog("spawned new prey at %f, %f, %f ", prey->position.x, prey->position.y, prey->position.z);
+                 //sj_get_string_value(sj_object_get_value(item, "font"));
+               // if (str)
+                //{
+                 //   gfc_line_cpy(font_manager.font_list[i].filename, str);
+               // }
+            
+                
+               // sj_get_integer_value(sj_object_get_value(item, "size"), &size);
+                //font_manager.font_list[i].pointSize = size;
+                //font_manager.font_list[i].font = TTF_OpenFont(font_manager.font_list[i].filename, font_manager.font_list[i].pointSize);
+                //if (!font_manager.font_list[i].font)slog("failed to load font %s");
+            }
+        }
     }
     else
         slog("failed to load preylist");
@@ -136,11 +169,11 @@ void game_manager_free(Game_Manager* game_manager) {
     if (!game_manager) return;
     if (game_manager->bgm) {
         gfc_sound_free(game_manager->bgm);
-        free(game_manager->bgm);
+        //free(game_manager->bgm);
     }
     if (game_manager->menu_sound) {
         gfc_sound_free(game_manager->menu_sound);
-        free(game_manager->menu_sound);
+        //free(game_manager->menu_sound);
     }
 
 }

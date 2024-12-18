@@ -1,11 +1,14 @@
 #ifndef __LEVEL_H_
 #define __LEVEL_H_
 #include "gfc_audio.h"
+#include "gfc_config.h"
 #include "player.h"
+#include "prey.h"
+#include "predator.h"
 
 typedef struct Level_S
 {	
-	Entity*			predator_list;
+	Entity*			predator_list; //store entity indices instead prolly
 	Entity*			prey_list;
 	int				predator_total;
 	int				prey_total;

@@ -48,8 +48,8 @@ Entity* player_new()
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(2, 2, 2);
 	self->model = gf3d_model_load("models/player.model"); 
-    //self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
-    self->collider = sphere_collider_new(self->position, capsule_radius); //just make this trigger so no one hits it
+    self->collider = box_collider_new(self->position, gfc_vector3d(2.6, 2.6, 2.6));
+    //self->collider = sphere_collider_new(self->position, capsule_radius); //just make this trigger so no one hits it
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
 
@@ -239,7 +239,7 @@ void player_draw(Entity* self) {
     );
            
     //draw capsule      
-   if(!self->capsule || !self->collider) return;
+   if(!self->capsule) return;
     GFC_Color col, amb;
     GFC_Sphere s1, s2;
     GFC_Edge3D e = get_capsule_endpoints(self->capsule);
@@ -252,23 +252,28 @@ void player_draw(Entity* self) {
     amb = gfc_color(0, 0, 0, 0);
     gf3d_draw_sphere_solid(s1, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
     gf3d_draw_sphere_solid(s2, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
-    
+     //draw box collider
+    if (!self->collider || self->collider->primitive.type != GPT_BOX)
+        return;
+    gf3d_draw_cube_solid(self->collider->primitive.s.b, gfc_vector3d(self->collider->primitive.s.b.w / 2, self->collider->primitive.s.b.h / 2, self->collider->primitive.s.b.d / 2), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), gfc_color(0.8, 0.2, 0.8, 0.4));
 }
 
 void draw_hud(Entity* self) {
-    char* healthVal, * foodVal, * speed;
+    char healthVal[10],  foodVal[10],  speed[20];
     Player_Data* dat;
     dat = (struct Player_Data*)(self->data);
-    healthVal = "";
-    foodVal = "";
-    speed = "";
-    sprintf(&healthVal, "%i", dat->health);
-    sprintf(&foodVal, "%i", dat->prey_eaten);
-    sprintf(&speed, "%f", gfc_vector3d_magnitude(self->collider->velocity));
+
+    snprintf(healthVal, sizeof(healthVal), "%i", dat->health);
+    snprintf(foodVal, sizeof(foodVal), "%i", dat->prey_eaten);
+    snprintf(speed, sizeof(speed), "%f", gfc_vector3d_magnitude(self->collider->velocity), *speed);
+
     //hud
-    gf2d_font_draw_line_tag(&healthVal, FT_H1, GFC_COLOR_GREEN, gfc_vector2d(300, 10));
-    gf2d_font_draw_line_tag(&foodVal, FT_H1, GFC_COLOR_YELLOW, gfc_vector2d(600, 10));
-    gf2d_font_draw_line_tag(&speed, FT_H1, GFC_COLOR_BLUE, gfc_vector2d(900, 10));
+    //slog("health %i, %i", dat->health, *healthVal);
+    //slog("food %i, %i", dat->prey_eaten, *foodVal);
+    //slog("speed %f, %f", gfc_vector3d_magnitude(self->collider->velocity), *speed);
+    gf2d_font_draw_line_tag(healthVal, FT_H1, GFC_COLOR_GREEN, gfc_vector2d(300, 10));
+    gf2d_font_draw_line_tag(foodVal, FT_H1, GFC_COLOR_YELLOW, gfc_vector2d(600, 10));
+    gf2d_font_draw_line_tag(speed, FT_H1, GFC_COLOR_BLUE, gfc_vector2d(900, 10));
 }
 
 void player_free(void* data)
