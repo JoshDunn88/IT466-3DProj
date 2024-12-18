@@ -98,6 +98,8 @@ int main(int argc,char *argv[])
     Model* sky;
     GFC_Matrix4 skyMat;
     Game_Manager* gm = new_game_manager();
+    Uint8 player_colliding;
+    Texture* og = gf3d_texture_load("models/player/player.png");
     //ground = environment_new();
     //player = player_new();
     //set_player(gm, player);
@@ -177,8 +179,21 @@ int main(int argc,char *argv[])
                 //ent stuff here after input before draws? 
                 entity_think_all();
                 //check mesh here
-                if (gm->player->capsule)
-                    capsule_to_mesh_collision(gm->player->collider, gm->player->capsule, gm->current_level.level_obj);
+                if (gm->player->capsule) {
+                    if (capsule_to_mesh_collision(gm->player->collider, gm->player->capsule, gm->current_level.level_obj)) {
+                        gm->player->collider->gravity = 0;
+                        gm->player->model->texture = gm->current_level.level_model->texture;
+                    }
+                    
+                        
+                    else {
+                        gm->player->collider->gravity = 0.002;
+                        //gm->player->model->texture = og;
+                    }
+                                                 
+
+                }
+                    
 
                 entity_update_all();
 

@@ -173,7 +173,7 @@ void player_update(Entity* self)
             if (keys[SDL_SCANCODE_SPACE])
             {
                 if (!SPACE) {
-                    player_move_up(self, 0.1);
+                    player_move_up(self, 0.05);
                     SPACE = 1;
                 }
                

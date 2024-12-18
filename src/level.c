@@ -68,6 +68,7 @@ Level load_level_config_from_file(Game_Manager* game_manager, const char* filena
         environment->rotation = gfc_vector3d(0, 0, 0);
         world = gf3d_model_load_full(meshfile, sj_object_get_value_as_string(current, "texture"));
         if (world) {
+            level.level_model = world;
             environment->model = world;
             Mesh* currmesh = (struct Mesh*)(world->mesh_list->elements[0].data);
             MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);

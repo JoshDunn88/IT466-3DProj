@@ -13,6 +13,7 @@
 typedef struct Level_S
 {	
 	ObjData*		level_obj;
+	Model*			level_model;
 	Entity*			predator_list; //store entity indices instead prolly
 	Entity*			prey_list;
 	int				predator_total;
