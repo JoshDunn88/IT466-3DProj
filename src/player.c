@@ -43,7 +43,7 @@ Entity* player_new()
 
 	
 	//self->name = "playerr";
-    float capsule_radius = 1;
+    float capsule_radius = 0.5;
 	self->position = gfc_vector3d(0, 0, 0);
 	self->rotation = gfc_vector3d(0, 0, 0);
 	self->scale = gfc_vector3d(2, 2, 2);
@@ -281,7 +281,7 @@ void player_move_up(Entity* self, float magnitude)
     slog("jump: %f,%f,%f", up.x, up.y, right.z);
     //negative why??
     //do additive probably better
-    self->collider->velocity= jump;
+    gfc_vector3d_add(self->collider->velocity, self->collider->velocity, jump);
 }
 
 void player_walk_forward(Entity* self, float magnitude)

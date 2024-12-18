@@ -96,38 +96,20 @@ GFC_Vector3D ClosestPointOnLineSegment(GFC_Vector3D a, GFC_Vector3D b, GFC_Vecto
     return gfc_vector3d_added(a, gfc_vector3d_scaled(ab, saturate)); 
 }
 
-GFC_Vector3D ClosestPointOnCapsule(Capsule* capsule, GFC_Triangle3D tri) {
-    //do this tomorrow
-}
-//maybe pass by pointer
-Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth) {
-    GFC_Vector3D t_n, center, projected_point, c0, c1, c2;
+Uint8 ClosestPointOnTriangle(GFC_Vector3D point, GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* best_p, GFC_Vector3D* intersect) {
+    GFC_Vector3D t_n, center, c0, c1, c2;
     float distance;
     //slog("triangle: %f %f %f, %f %f %f, %f %f %f", t.a.x, t.a.y, t.a.z, t.b.x, t.b.y, t.b.z, t.c.x, t.c.y, t.c.z);
     center = gfc_vector3d(s.x, s.y, s.z);
     //slog("center: %f %f %f", center.x, center.y, center.z);
-    
+
     t_n = gfc_trigfc_angle_get_normal(t);
     //slog("normal: %f %f %f,", t_n.x, t_n.y, t_n.z);
+
     distance = gfc_vector3d_dot_product(gfc_vector3d_subbed(center, t.a), t_n);
-
-    //something about double sided don't think I need?
-    //slog("distance: %f, radius: %f", distance, s.r);
-    //intersection with triangle plane test
-    if (distance < -s.r || distance > s.r)
-        return false;// no intersection
-    else
-    {
-        //slog("collided");
-        //return true;
-    }
-
-    projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
-    
-    // Now determine whether the projected point is inside all triangle edges: 
-    gfc_vector3d_cross_product(&c0, gfc_vector3d_subbed(projected_point, t.a), gfc_vector3d_subbed(t.b, t.a));
-    gfc_vector3d_cross_product(&c1, gfc_vector3d_subbed(projected_point, t.b), gfc_vector3d_subbed(t.c, t.b));
-    gfc_vector3d_cross_product(&c2, gfc_vector3d_subbed(projected_point, t.c), gfc_vector3d_subbed(t.a, t.c));
+    gfc_vector3d_cross_product(&c0, gfc_vector3d_subbed(point, t.a), gfc_vector3d_subbed(t.b, t.a));
+    gfc_vector3d_cross_product(&c1, gfc_vector3d_subbed(point, t.b), gfc_vector3d_subbed(t.c, t.b));
+    gfc_vector3d_cross_product(&c2, gfc_vector3d_subbed(point, t.c), gfc_vector3d_subbed(t.a, t.c));
 
     //if true, projected point is closest point on triangle to the sphere center
     Uint8 inside = gfc_vector3d_dot_product(c0, t_n) <= 0 && gfc_vector3d_dot_product(c1, t_n) <= 0 && gfc_vector3d_dot_product(c2, t_n) <= 0;
@@ -155,46 +137,104 @@ Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D*
     //intersects is final check on if we are colliding
     if (!inside && !intersects)
         return false;
-    
-    GFC_Vector3D best_point = projected_point;
+
+    GFC_Vector3D best_point = point;
     GFC_Vector3D intersection_vec;
 
-   if (inside)
-   {
-       intersection_vec = gfc_vector3d_subbed(center, projected_point);
-   }
-   else
-   {
-       GFC_Vector3D d = gfc_vector3d_subbed(center, point1);
-       float best_distsq = gfc_vector3d_dot_product(d, d);
-       best_point = point1;
-       intersection_vec = d;
+    if (inside)
+    {
+        intersection_vec = gfc_vector3d_subbed(center, point);
+    }
+    else
+    {
+        GFC_Vector3D d = gfc_vector3d_subbed(center, point1);
+        float best_distsq = gfc_vector3d_dot_product(d, d);
+        best_point = point1;
+        intersection_vec = d;
 
-       d = gfc_vector3d_subbed(center, point2);
-       float distsq = gfc_vector3d_dot_product(d, d);
-       if (distsq < best_distsq)
-       {
-           distsq = best_distsq;
-           best_point = point2;
-           intersection_vec = d;
-       }
+        d = gfc_vector3d_subbed(center, point2);
+        float distsq = gfc_vector3d_dot_product(d, d);
+        if (distsq < best_distsq)
+        {
+            distsq = best_distsq;
+            best_point = point2;
+            intersection_vec = d;
+        }
 
-       d = gfc_vector3d_subbed(center, point3);
-       //changed from new float should be fine
-       distsq = gfc_vector3d_dot_product(d, d);
-       if (distsq < best_distsq)
-       {
-           distsq = best_distsq;
-           best_point = point3;
-           intersection_vec = d;
-       }
-   }
-   
+        d = gfc_vector3d_subbed(center, point3);
+        //changed from new float should be fine
+        distsq = gfc_vector3d_dot_product(d, d);
+        if (distsq < best_distsq)
+        {
+            distsq = best_distsq;
+            best_point = point3;
+            intersection_vec = d;
+        }
+    }
+
+    if (best_p)
+        *best_p = best_point;
+    if (intersect)
+        *intersect = intersection_vec;
+    //maybe add distance in the future
+    return true;
+}
+
+GFC_Vector3D ClosestPointOnCapsule(Capsule* capsule, GFC_Triangle3D tri) {
+    if (!capsule) return;
+    GFC_Edge3D endpoints = get_capsule_endpoints(capsule);
+    GFC_Vector3D tip, base, t_n, reference_point, best_point, intersection_vec;
+    // Compute capsule line endpoints A tip, B base like before in capsule-capsule case:
+    //i store the axis not the total ends so this is flipped
+    GFC_Vector3D CapsuleNormal = gfc_vector3d_subbed(endpoints.a, endpoints.b);
+    gfc_vector3d_normalize(&CapsuleNormal);
+    GFC_Vector3D LineEndOffset = gfc_vector3d_scaled(CapsuleNormal, capsule->radius);
+    GFC_Vector3D tip = gfc_vector3d_added(endpoints.a, LineEndOffset);
+    GFC_Vector3D base = gfc_vector3d_subbed(endpoints.b, LineEndOffset);
+
+    // Then for each triangle, ray-plane intersection:
+    //  N is the triangle plane normal (it was computed in sphere – triangle intersection case)
+     t_n = gfc_trigfc_angle_get_normal(tri);
+  //   float distance = gfc_vector3d_dot_product(gfc_vector3d_subbed(center, tri.a), t_n);
+    float t = gfc_vector3d_dot_product(t_n, gfc_vector3d_scaled(gfc_vector3d_subbed(tri.a, base), 1 / fabsf(gfc_vector3d_dot_product(t_n, CapsuleNormal))));
+    GFC_Vector3D line_plane_intersection = gfc_vector3d_added(base, gfc_vector3d_scaled(CapsuleNormal, t));
+
+    GFC_Vector3D reference_point;
+    GFC_Sphere = 
+    Uint8 possible = ClosestPointOnTriangle(line_plane_intersection, s, tri, &best_point, &intersection_vec);
+    // The center of the best sphere candidate:
+    GFC_Vector3D center = ClosestPointOnLineSegment(endpoints.a, endpoints.b, reference_point);
+    //The “find closest point on triangle to line_plane_intersection” refers to the same approach that was used in the sphere – triangle intersection case, when we try to determine if the sphere centre projection is inside the triangle, or find a closest edge point.Here, instead of the sphere centre projection, we use the line_plane_intersection point :
+
+}
+//maybe pass by pointer
+Uint8 sphere_to_triangle_collision(GFC_Sphere s, GFC_Triangle3D t, GFC_Vector3D* pen_norm, float* pen_depth) {
+    GFC_Vector3D t_n, center, projected_point, best_point, intersection_vec;
+    float distance;
+    //slog("triangle: %f %f %f, %f %f %f, %f %f %f", t.a.x, t.a.y, t.a.z, t.b.x, t.b.y, t.b.z, t.c.x, t.c.y, t.c.z);
+    center = gfc_vector3d(s.x, s.y, s.z);
+    //slog("center: %f %f %f", center.x, center.y, center.z); 
+    t_n = gfc_trigfc_angle_get_normal(t);
+    //slog("normal: %f %f %f,", t_n.x, t_n.y, t_n.z);
+    distance = gfc_vector3d_dot_product(gfc_vector3d_subbed(center, t.a), t_n);
+
+    //slog("distance: %f, radius: %f", distance, s.r);
+    //intersection with triangle plane test
+    if (distance < -s.r || distance > s.r)
+        return false;// no intersection with plane
+
+    projected_point = gfc_vector3d_subbed(center, gfc_vector3d_scaled(t_n, distance)); // projected sphere center on triangle plane
+    Uint8 collided = ClosestPointOnTriangle(projected_point, s, t, &best_point, &intersection_vec);
+    
+    if (!collided)
+        return false;
    //seemed wrong type on tutorial, should be float?
    
    float len = gfc_vector3d_magnitude(intersection_vec); 
-   *pen_norm = gfc_vector3d_scaled(intersection_vec, 1 / len);  // normalize, probably quicker than the function?
-   *pen_depth = s.r - len;
+   if (pen_norm)
+    *pen_norm = gfc_vector3d_scaled(intersection_vec, 1 / len);  // normalize, probably quicker than the function?
+   if (pen_depth)
+    *pen_depth = s.r - len;
    slog("colliding");
    return true; // intersection success
     
