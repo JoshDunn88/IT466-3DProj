@@ -78,7 +78,43 @@ Level load_level_config_from_file(Game_Manager* game_manager, const char* filena
     }
     else
         slog("did not find world");
+
+    current = sj_object_get_value(config, "player");
+    if (current) {
+        sj_value_as_vector3d(sj_object_get_value(current, "spawn"), &player->collider->position); //fix this with spawn function
+    }
+    else
+        slog("did not find player data");
     
+    current = sj_object_get_value(config, "predator");
+    if (current)
+    {
+        slog("about to get count");
+        predatorlist = sj_object_get_value(current, "predatorlist");
+        level.predator_total = sj_array_get_count(predatorlist);
+        if (level.predator_total == 0)
+        {
+            slog("predator config has no predator");
+        }
+        else
+        {
+            for (i = 0; i < level.predator_total; i++)
+            {
+                item = sj_array_get_nth(predatorlist, i);
+                if (!item)continue;
+                predator = prey_new();
+                predator->collider->layer = C_PREDATOR;
+                predator->collider->isTrigger = 0;
+                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &predator->collider->position); //fix this with spawn function later
+                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &predator->position);
+                 collider_update(predator->collider);
+                 slog("spawned new predator at %f, %f, %f ", predator->position.x, predator->position.y, predator->position.z);
+            }
+        }
+    }
+    else
+        slog("failed to load predatorlist");
+
     current = sj_object_get_value(config, "prey");
     if (current)
     {
@@ -95,22 +131,11 @@ Level load_level_config_from_file(Game_Manager* game_manager, const char* filena
             {
                 item = sj_array_get_nth(preylist, i);
                 if (!item)continue;
-                 prey = prey_new(); 
-                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->collider->position); //fix this with spawn function later
-                 sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->position);
-                 collider_update(prey->collider);
-                 slog("spawned new prey at %f, %f, %f ", prey->position.x, prey->position.y, prey->position.z);
-                 //sj_get_string_value(sj_object_get_value(item, "font"));
-               // if (str)
-                //{
-                 //   gfc_line_cpy(font_manager.font_list[i].filename, str);
-               // }
-            
-                
-               // sj_get_integer_value(sj_object_get_value(item, "size"), &size);
-                //font_manager.font_list[i].pointSize = size;
-                //font_manager.font_list[i].font = TTF_OpenFont(font_manager.font_list[i].filename, font_manager.font_list[i].pointSize);
-                //if (!font_manager.font_list[i].font)slog("failed to load font %s");
+                prey = prey_new();
+                sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->collider->position); //fix this with spawn function later
+                sj_value_as_vector3d(sj_object_get_value(item, "spawn"), &prey->position);
+                collider_update(prey->collider);
+                slog("spawned new prey at %f, %f, %f ", prey->position.x, prey->position.y, prey->position.z);
             }
         }
     }

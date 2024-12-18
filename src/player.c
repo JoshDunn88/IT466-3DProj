@@ -49,6 +49,7 @@ Entity* player_new()
 	self->scale = gfc_vector3d(2, 2, 2);
 	self->model = gf3d_model_load("models/player.model"); 
     self->collider = box_collider_new(self->position, gfc_vector3d(1.6, 1.6, 1.6));
+    //self->collider->isTrigger = false;
     //self->collider = sphere_collider_new(self->position, capsule_radius); //just make this trigger so no one hits it
     self->collider->layer = C_PLAYER;
     self->collider->gravity = 0.00;
