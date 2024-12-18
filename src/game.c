@@ -27,10 +27,11 @@
 
 #include "gf3d_obj_load.h"
 
-#include "entity.h"
-#include "player.h"
+//#include "entity.h" in player.h
+//#include "player.h" in level.h
 #include "prey.h"
 #include "environment.h"
+#include "level.h"
 
 //#include "physics.h" included in entity now
 
@@ -64,16 +65,6 @@ void draw_origin()
 
 int main(int argc,char *argv[])
 {
-    
-    //local variables
-    Entity* player;
-    Player_Data* dat;
-    //Entity* prey, *prey2, * prey3, * prey4;
-    Entity* ground;
-    Model *sky,*dino;
-    GFC_Matrix4 skyMat,dinoMat;
-    //GFC_String* health, *food;
-    char* healthVal, *foodVal, *speed;
     //initializtion    
     parse_arguments(argc,argv);
     init_logger("gf3d.log",0);
@@ -98,13 +89,23 @@ int main(int argc,char *argv[])
     slog_sync();
 
     //game setup
+    //local variables
+    Entity* player;
+    //Entity* prey, *prey2, * prey3, * prey4;
+    Entity* ground;
+    Model* sky, * dino;
+    GFC_Matrix4 skyMat, dinoMat;
+    Game_Manager* gm = new_game_manager();
+    ground = environment_new();
+    player = player_new();
+    set_player(gm, player);
+
     gf2d_mouse_load("actors/mouse.actor");
     sky = gf3d_model_load("models/sky.model");
     gfc_matrix4_identity(skyMat);
 
-    ground = environment_new();
-    player = player_new();
-    dat = (struct Player_Data*)(player->data);
+    
+    
     /*prey = prey_new();
     prey2 = prey_new();
     prey2->collider->isTrigger = 0;
@@ -118,19 +119,9 @@ int main(int argc,char *argv[])
     */
     //ground = environment_new();
     //ground->position = gfc_vector3d(0, 0, -5);
-    //gf3d_model_move(ground->model, ground->position, gfc_vector3d(0, 0, 0));
         Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
         MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
         ObjData* currobj = currprim->objData;
-
-        //gf3d_model_move(ground->model, ground->position, ground->rotation);
-    
-
-    //health = gfc_string("Health: ");
-    //food = gfc_string("Food: ");
-    healthVal = "";
-    foodVal = "";
-    speed = "";
         //camera
     gf3d_camera_set_scale(gfc_vector3d(1,1,1));
     gf3d_camera_set_position(gfc_vector3d(0,0,5));
@@ -153,28 +144,8 @@ int main(int argc,char *argv[])
         
     //windows
 
-    //some bs
-    int i, j;
-    //slog("player has %d submeshes", player->model->mesh_list->count);
-    
-        //Mesh* currmesh = (struct Mesh*)(ground->model->mesh_list->elements[0].data);
-       // MeshPrimitive* currprim = (struct MeshPrimitive*)(currmesh->primitives->elements[0].data);
-       // ObjData* currobj = currprim->objData;
-        //Mesh_Collider* mc = mesh_collider_new(currobj);
         slog("vertex count %d", currobj->vertex_count);
         slog("normal count %d", currobj->normal_count);
-        //sphere_to_mesh_collision(player->collider->primitive.s.s, currobj);
-        /*
-        for (i = 0; i < currobj->face_count; i++)
-        {
-            GFC_Vector3D p0, p1, p2;
-            p0 = currobj->vertices[currobj->faceVerts[i].verts[0]];
-            p1 = currobj->vertices[currobj->faceVerts[i].verts[1]];
-            p2 = currobj->vertices[currobj->faceVerts[i].verts[2]];
-            GFC_Triangle3D tri = gfc_triangle(p0, p1, p2);
-            slog("triangle %d: p0: %f, %f, %f  p1: %f, %f, %f p2: %f, %f, %f", i, p0.x, p0.y, p0.z, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-        }
-        */
     //slog
     
     // main game loop    
@@ -194,40 +165,31 @@ int main(int argc,char *argv[])
         gfc_input_update();
         gf2d_mouse_update();
         gf2d_font_update();
+
+        game_update(gm);
+        if (!gm->pause){
+            //ent stuff here after input before draws? 
+            entity_think_all();
+            //check mesh here
+            if (player->capsule)
+                capsule_to_mesh_collision(player->collider, player->capsule, currobj);
+
+            entity_update_all();
+
+            //camera work should prob go last - Josh
+            //camera updates
+            gf3d_camera_controls_update();
         
-
-        //ent stuff here after input before draws? 
-        entity_think_all();
-        //check mesh here
-        if (player->capsule)
-            capsule_to_mesh_collision(player->collider, player->capsule, currobj);
-        entity_update_all();
-
-        //make function later
-        if (!player->alive) dat->health = 0;
-        sprintf(&healthVal, "%i", dat->health);
-        sprintf(&foodVal, "%i", dat->prey_eaten);
-        sprintf(&speed, "%f", gfc_vector3d_magnitude(player->collider->velocity));
-        //gfc_string_append(health, healthVal);
-        //gfc_string_append(food, foodVal);
-
-        //camera work should prob go last - Josh
-        //camera updates
-        gf3d_camera_controls_update();
-        
-        gf3d_camera_update_view();
-        gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
-
+            gf3d_camera_update_view();
+            gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+        }
 
         gf3d_vgraphics_render_start();
 
-            //3D draws
-        
+            //3D draws      
                 gf3d_model_draw_sky(sky,skyMat,GFC_COLOR_WHITE);
-
                 //always do ui draws after world draws, which are after backgroun draws (skybox)
-                entity_draw_all();
-              
+                entity_draw_all();         
 
             /*    gf3d_model_draw(
                     dino,
@@ -235,18 +197,17 @@ int main(int argc,char *argv[])
                     GFC_COLOR_WHITE,
                     0);
                 */
-
                 
                 draw_origin();
             //2D draws
                 gf2d_mouse_draw();
                 gf2d_font_draw_line_tag("ALT+F4 to exit",FT_H1,GFC_COLOR_WHITE, gfc_vector2d(10,10));
-                //make ui function suite and file later probably         
-                    
+                //make ui function suite and file later probably  
+                // 
+                //hud       
+                //draw_hud(player);
                 //slog("about to do UI");
-                gf2d_font_draw_line_tag(&healthVal, FT_H1, GFC_COLOR_GREEN, gfc_vector2d(300, 10));
-                gf2d_font_draw_line_tag(&foodVal, FT_H1, GFC_COLOR_YELLOW, gfc_vector2d(600, 10));
-                gf2d_font_draw_line_tag(&speed, FT_H1, GFC_COLOR_BLUE, gfc_vector2d(900, 10));
+                
         gf3d_vgraphics_render_end();
         if (gfc_input_command_down("exit"))_done = 1; // exit condition
         game_frame_delay();
@@ -255,6 +216,7 @@ int main(int argc,char *argv[])
     //cleanup
     //entity_free(player); //what was I even doing here lol, this caused hang on exit
     //mesh_collider_free(mc);
+    free(gm); //make this atexit function later
     slog("gf3d program end");
     //SDL_SetRelativeMouseMode(SDL_FALSE); //probably dont need this but
     //SDL_SetWindowGrab(gf3d_vgraphics_get_SDL_Window, SDL_FALSE);

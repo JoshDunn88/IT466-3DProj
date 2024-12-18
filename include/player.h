@@ -1,6 +1,8 @@
 #ifndef __PLAYER_H_
 #define __PLAYER_H_
 
+#include "gf2d_font.h"
+
 #include "entity.h"
 
 typedef struct Player_Data_S
@@ -43,6 +45,7 @@ void player_think(Entity* self);
 void player_update(Entity* self);
 
 void player_draw(Entity* self);
+void draw_hud(Entity* self);
 
 void player_free(void* data);
 

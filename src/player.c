@@ -211,6 +211,8 @@ void player_update(Entity* self)
           
             //can this go here?
             cam_follow_player(self, -10);
+            Player_Data* dat = (struct Player_Data*)(self->data);
+            if (!self->alive) dat->health = 0;
 
             return;  
 }
@@ -241,6 +243,7 @@ void player_draw(Entity* self) {
     GFC_Color col, amb;
     GFC_Sphere s1, s2;
     GFC_Edge3D e = get_capsule_endpoints(self->capsule);
+    
 
     s1 = gfc_sphere(e.a.x, e.a.y, e.a.z, self->capsule->radius);
     s2 = gfc_sphere(e.b.x, e.b.y, e.b.z, self->capsule->radius);
@@ -249,6 +252,23 @@ void player_draw(Entity* self) {
     amb = gfc_color(0, 0, 0, 0);
     gf3d_draw_sphere_solid(s1, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
     gf3d_draw_sphere_solid(s2, gfc_vector3d(0, 0, 0), gfc_vector3d(0, 0, 0), gfc_vector3d(1, 1, 1), col, amb);
+    
+}
+
+void draw_hud(Entity* self) {
+    char* healthVal, * foodVal, * speed;
+    Player_Data* dat;
+    dat = (struct Player_Data*)(self->data);
+    healthVal = "";
+    foodVal = "";
+    speed = "";
+    sprintf(&healthVal, "%i", dat->health);
+    sprintf(&foodVal, "%i", dat->prey_eaten);
+    sprintf(&speed, "%f", gfc_vector3d_magnitude(self->collider->velocity));
+    //hud
+    gf2d_font_draw_line_tag(&healthVal, FT_H1, GFC_COLOR_GREEN, gfc_vector2d(300, 10));
+    gf2d_font_draw_line_tag(&foodVal, FT_H1, GFC_COLOR_YELLOW, gfc_vector2d(600, 10));
+    gf2d_font_draw_line_tag(&speed, FT_H1, GFC_COLOR_BLUE, gfc_vector2d(900, 10));
 }
 
 void player_free(void* data)
